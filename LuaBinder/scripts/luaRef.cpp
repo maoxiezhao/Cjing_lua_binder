@@ -88,6 +88,29 @@ bool LuaRef::operator!=(const LuaRef & ref) const
 	return !(*this == ref);
 }
 
+LuaRef LuaRef::CreateRef(lua_State*l)
+{
+	return LuaRef(l, luaL_ref(l, LUA_REGISTRYINDEX));
+}
+
+LuaRef LuaRef::CreateRef(lua_State*l, int index)
+{
+	lua_pushvalue(l, index);
+	return LuaRef(l, luaL_ref(l, LUA_REGISTRYINDEX));
+}
+
+LuaRef LuaRef::CreateTable(lua_State* l, int narray, int nrec)
+{
+	lua_createtable(l, narray, nrec);
+	return CreateRef(l);
+}
+
+LuaRef LuaRef::CreateGlobalRef(lua_State* l)
+{
+	lua_pushglobaltable(l);
+	return CreateRef(l);
+}
+
 bool LuaRef::IsEmpty() const
 {
 	return l == nullptr || (mRef == LUA_REFNIL || mRef == LUA_NOREF);

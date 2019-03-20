@@ -253,5 +253,8 @@
     <ClInclude Include="scripts\luaException.h">
       <Filter>scripts</Filter>
     </ClInclude>
+    <ClInclude Include="scripts\luaCommon.h">
+      <Filter>scripts</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

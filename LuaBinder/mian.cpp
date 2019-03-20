@@ -29,6 +29,15 @@ private:
 	std::string mName;
 };
 
+template<typename T, typename F>
+void TestBindingFunction(lua_State*l, T& object, const F& func)
+{
+	using FuncType = LuaBinderImpl::BindClassMethodFunc<T, F>;
+	std::cout << FuncType::value << std::endl;
+
+	LuaTools::BindingUserData::PushUserdata<F>(l, func);
+}
+
 void TestLuaBinding(LuaContext& context)
 {
 	lua_State* l = context.GetLuaState();
@@ -38,11 +47,13 @@ void TestLuaBinding(LuaContext& context)
 		.BeginClass<Gun>("Gun")
 		.AddConstructor()
 		.AddFunction()
-		.AddMethod()
 		.AddMember()
 		.EndClass();
 
 	context.DoFileIfExists(l, "main");
+
+	Gun gun;
+	TestBindingFunction(l, gun, &Gun::Shoot);
 }
 
 int main()

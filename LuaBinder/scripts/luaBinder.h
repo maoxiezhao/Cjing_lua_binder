@@ -44,9 +44,14 @@ namespace Cjing3D
 			return *this;
 		}
 
-		LuaBindClass<T, ParentT>& AddMethod()
+		template<typename T, typename FUNC>
+		LuaBindClass<T, ParentT>& AddMethod(const std::string& name, const FUNC& func)
 		{
 			Logger::Info("AddMethod");
+			using MethodCaller = LuaBinderImpl::BindClassMethodFunc<T, FUNC>;
+			LuaRef funcRef = LuaTools::CreateFuncWithUserdata(l, MethodCaller::Caller, func);
+			RegisterFunction(name, funcRef);
+
 			return *this;
 		}
 
@@ -68,6 +73,11 @@ namespace Cjing3D
 			mCurrentMeta(meta)
 		{}
 
+		bool RegisterFunction(const std::string& name, LuaRef func)
+		{
+			return true;
+		}
+
 		lua_State * mLuaState = nullptr;
 		LuaRef mCurrentMeta = LuaRef::NULL_REF;
 	};
@@ -79,7 +89,7 @@ namespace Cjing3D
 		LuaBinder(lua_State* l) :
 			mLuaState(l)
 		{
-			mCurrentMeta = LuaTools::CreateGlobalRef(l);
+			mCurrentMeta = LuaRef::CreateGlobalRef(l);
 		}
 
 		template<typename T>

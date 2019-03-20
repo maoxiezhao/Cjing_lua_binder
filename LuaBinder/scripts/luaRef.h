@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lua\lua.hpp"
+#include "scripts\luaCommon.h"
 #include "scripts\luaTools.h"
 
 #include <string>
@@ -21,13 +21,26 @@ namespace Cjing3D
 		bool operator ==(const LuaRef& ref)const;
 		bool operator !=(const LuaRef& ref)const;
 
+		static LuaRef CreateRef(lua_State*l);
+		static LuaRef CreateRef(lua_State*l, int index);
+		static LuaRef CreateTable(lua_State* l, int narray = 0, int nrec = 0);
+		static LuaRef CreateGlobalRef(lua_State* l);
+
+		template<typename T>
+		static LuaRef CreateFuncWithUserdata(lua_State*l, lua_CFunction func, const T& userdata)
+		{
+			LuaTools::BindingUserData::PushUserdata<T>(l, userdata);
+			lua_pushcclosure(l, func, 1);
+			return CreateRef(l);
+		}
+
 		bool IsEmpty()const;
 		int  GetRef()const;
 		void Push()const;
 		void Clear();
 		lua_State* GetLuaState()const;
 
-		template<typename K, typename V>
+		template<typename V, typename K>
 		void RawSet(const K& key, const V& value)
 		{
 			Push();
@@ -37,7 +50,7 @@ namespace Cjing3D
 			lua_pop(l, 1);
 		}
 
-		template<typename K, typename V = LuaRef>
+		template<typename V = LuaRef, typename K>
 		V RawGet(const K& key)
 		{
 			Push();
@@ -79,7 +92,7 @@ namespace Cjing3D
 			}
 			else
 			{
-				return LuaTools::CreateRef(l, index);
+				return LuaRef::CreateRef(l, index);
 			}
 		}
 	};

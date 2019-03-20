@@ -1,6 +1,8 @@
 #pragma once
 
-#include "lua\lua.hpp"
+#include "scripts\luaRef.h"
+#include "scripts\luaTools.h"
+
 #include <string>
 
 namespace Cjing3D

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lua\lua.hpp"
+#include "scripts\luaCommon.h"
 #include "scripts\luaException.h"
 
 #include <type_traits>
@@ -65,7 +65,7 @@ namespace Cjing3D
 		{
 			index = GetPositiveIndex(l, index);
 			if (!lua_isnumber(l, index))
-				LuaTools::ArgError(l, index, std::string("Excepted:Number, got ") + luaL_typename(l, index));
+				LuaException::ArgError(l, index, std::string("Excepted:Number, got ") + luaL_typename(l, index));
 
 			return static_cast<T>(lua_tonumber(l, index));
 		}
@@ -86,7 +86,7 @@ namespace Cjing3D
 		{
 			index = GetPositiveIndex(l, index);
 			if (!lua_isinteger(l, index))
-				LuaTools::ArgError(l, index, std::string("Excepted:Integer, got ") + luaL_typename(l, index));
+				LuaException::ArgError(l, index, std::string("Excepted:Integer, got ") + luaL_typename(l, index));
 
 			return static_cast<T>(lua_tointeger(l, index));
 		}
@@ -108,7 +108,7 @@ namespace Cjing3D
 		{
 			index = GetPositiveIndex(l, index);
 			if (!lua_isboolean(l, index))
-				ArgError(l, index, std::string("Excepted:boolean, got ") + luaL_typename(l, index));
+				LuaException::ArgError(l, index, std::string("Excepted:boolean, got ") + luaL_typename(l, index));
 
 			return lua_toboolean(l, index);
 		}
@@ -149,9 +149,19 @@ namespace Cjing3D
 		{
 			index = GetPositiveIndex(l, index);
 			if (!lua_isstring(l, index))
-				ArgError(l, index, std::string("Excepted:String, got ") + luaL_typename(l, index));
+				LuaException::ArgError(l, index, std::string("Excepted:String, got ") + luaL_typename(l, index));
 
 			return lua_tostring(l, index);
 		}
 	};
+
+	template<>
+	struct LuaTypeNormalMapping<char*>
+	{
+		static void Push(lua_State*l, const char* value)
+		{
+			lua_pushstring(l, value);
+		}
+	};
+
 }

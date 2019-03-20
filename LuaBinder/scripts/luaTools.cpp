@@ -10,34 +10,11 @@ namespace Cjing3D
 {
 namespace LuaTools
 {
-	LuaRef CreateRef(lua_State*l)
-	{
-		return LuaRef(l, luaL_ref(l, LUA_REGISTRYINDEX));
-	}
-
-	LuaRef CreateRef(lua_State*l, int index)
-	{
-		lua_pushvalue(l, index);
-		return LuaRef(l, luaL_ref(l, LUA_REGISTRYINDEX));
-	}
-
-	LuaRef CreateTable(lua_State* l, int narray, int nrec)
-	{
-		lua_createtable(l, narray, nrec);
-		return CreateRef(l);
-	}
-
-	LuaRef CreateGlobalRef(lua_State* l)
-	{
-		lua_pushglobaltable(l);
-		return CreateRef(l);
-	}
-
 	void CheckType(lua_State * l, int index, int exceptedType)
 	{
 		if (lua_type(l, index) != exceptedType)
 		{
-			ArgError(l, index, std::string("excepted") + std::string(luaL_typename(l, exceptedType)) +
+			LuaException::ArgError(l, index, std::string("excepted") + std::string(luaL_typename(l, exceptedType)) +
 				" but get" + luaL_typename(l, index));
 		}
 	}
@@ -49,41 +26,6 @@ namespace LuaTools
 			positiveIndex = lua_gettop(l) + index + 1;
 
 		return positiveIndex;
-	}
-
-	void Error(lua_State * l, const std::string & message)
-	{
-		std::string msg(message);
-		luaL_traceback(l, l, NULL, 1);
-		msg += lua_tostring(l, -1);
-
-		throw LuaException(l, msg);
-	}
-
-	void ArgError(lua_State * l, int index, const std::string & message)
-	{
-		std::ostringstream oss;
-		lua_Debug info;
-		if (!lua_getstack(l, 0, &info))		// 获取当前运行函数的活动记录
-		{
-			// ??????
-			oss << "Bad argument #" << index << "(" << message << ")";
-			Error(l, oss.str());
-		}
-
-		lua_getinfo(l, "n", &info);			// 填充name域，即当前函数的名字域
-		if (std::string(info.namewhat) == "method")
-		{
-			// ?????
-			oss << "Calling:" << info.name << " failed. (" << message << ")";
-			Error(l, oss.str());
-		}
-
-		if (info.name == nullptr)
-			info.name = "?";
-
-		oss << "Bad argument #" << index << " to " << info.name << "(" << message << ")";
-		Error(l, oss.str());
 	}
 
 	void PrintLuaStack(lua_State * l)

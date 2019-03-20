@@ -6,7 +6,7 @@
 
 namespace Cjing3D
 {
-	void Error(lua_State * l, const std::string & message)
+	void LuaException::Error(lua_State * l, const std::string & message)
 	{
 		std::string msg(message);
 		luaL_traceback(l, l, NULL, 1);
@@ -15,7 +15,7 @@ namespace Cjing3D
 		throw LuaException(l, msg);
 	}
 
-	void ArgError(lua_State * l, int index, const std::string & message)
+	void LuaException::ArgError(lua_State * l, int index, const std::string & message)
 	{
 		std::ostringstream oss;
 		lua_Debug info;
