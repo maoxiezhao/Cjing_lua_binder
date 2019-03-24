@@ -160,9 +160,11 @@
     <ClCompile Include="lua\lvm.c" />
     <ClCompile Include="lua\lzio.c" />
     <ClCompile Include="mian.cpp" />
+    <ClCompile Include="scripts\luaBinder.cpp" />
     <ClCompile Include="scripts\luaBinder_impl.cpp" />
     <ClCompile Include="scripts\luaContext.cpp" />
     <ClCompile Include="scripts\luaException.cpp" />
+    <ClCompile Include="scripts\luaObject.cpp" />
     <ClCompile Include="scripts\luaRef.cpp" />
     <ClCompile Include="scripts\luaTools.cpp" />
   </ItemGroup>
@@ -201,6 +203,7 @@
     <ClInclude Include="scripts\luaCommon.h" />
     <ClInclude Include="scripts\luaContext.h" />
     <ClInclude Include="scripts\luaException.h" />
+    <ClInclude Include="scripts\luaObject.h" />
     <ClInclude Include="scripts\luaRef.h" />
     <ClInclude Include="scripts\luaTools.h" />
     <ClInclude Include="scripts\luaTypeMapping.h" />

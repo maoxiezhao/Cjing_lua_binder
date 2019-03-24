@@ -2,6 +2,7 @@
 
 #include "scripts\luaTools.h"
 #include "scripts\luaRef.h"
+#include "scripts\luaObject.h"
 
 namespace Cjing3D
 {
@@ -14,7 +15,7 @@ namespace LuaBinderImpl
 		static int gc(lua_State* l);
 	};
 
-	bool RegisterClass(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name)
+	inline bool RegisterClass(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name)
 	{
 		LuaRef ref = parentMeta.RawGet(name);
 		if (ref != LuaRef::NULL_REF)
@@ -27,7 +28,10 @@ namespace LuaBinderImpl
 
 		LuaRef classTable = LuaRef::CreateTable(l);
 		LuaRef constClassTable = LuaRef::CreateTable(l);
+
 		LuaRef staticClassTable = LuaRef::CreateTable(l);
+		staticClassTable.RawSet("__CLASS", constClassTable);
+		staticClassTable.RawSet("__CONST", constClassTable);
 
 		parentMeta.RawSet(name, staticClassTable);
 
@@ -42,7 +46,12 @@ namespace LuaBinderImpl
 		// the called lua function
 		static int Caller(lua_State* l)
 		{
-			/*F& func = *static_cast<F*>(lua_touserdata(l, lua_upvalueindex(1)))*/
+			F& func = *static_cast<F*>(lua_touserdata(l, lua_upvalueindex(1)));
+			T* obj = LuaObject::GetObject<T>(l, 1);
+
+			int resultCount = 0;
+
+			return resultCount;
 		}
 	};
 

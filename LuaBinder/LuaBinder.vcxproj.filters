@@ -143,6 +143,12 @@
     <ClCompile Include="scripts\luaException.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\luaBinder.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\luaObject.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\debug.h">
@@ -254,6 +260,9 @@
       <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="scripts\luaCommon.h">
+      <Filter>scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\luaObject.h">
       <Filter>scripts</Filter>
     </ClInclude>
   </ItemGroup>

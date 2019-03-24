@@ -46,8 +46,7 @@ void TestLuaBinding(LuaContext& context)
 	LuaBinder(l)
 		.BeginClass<Gun>("Gun")
 		.AddConstructor()
-		.AddFunction()
-		.AddMember()
+		.AddMethod("Shoot", &Gun::Shoot)
 		.EndClass();
 
 	context.DoFileIfExists(l, "main");

@@ -9,12 +9,25 @@ namespace Cjing3D
 	// 1.当bindClass时，创建3个表，为了实现不同的访问控制，分别创建class, const_class, static_class
 	//  class和const_class都会引用到static_class, 而static_class则包含了class和const_class
 
+	class LuaBindClassBase
+	{
+	public:
+		LuaBindClassBase(lua_State* l, LuaRef& meta) :
+			mLuaState(l),
+			mCurrentMeta(meta)
+		{}
+
+	protected:
+		bool RegisterFunction(const std::string& name, LuaRef func);
+
+		lua_State * mLuaState = nullptr;
+		LuaRef mCurrentMeta = LuaRef::NULL_REF;
+	};
 
 	// Binding Class
 	// used for add func, add member
-
 	template<typename T, typename ParentT>
-	class LuaBindClass
+	class LuaBindClass : public LuaBindClassBase
 	{
 	public:
 		static LuaBindClass<T, ParentT> BindClass(lua_State* l, LuaRef& parentMeta, const std::string& name)
@@ -44,12 +57,12 @@ namespace Cjing3D
 			return *this;
 		}
 
-		template<typename T, typename FUNC>
+		template<typename FUNC>
 		LuaBindClass<T, ParentT>& AddMethod(const std::string& name, const FUNC& func)
 		{
 			Logger::Info("AddMethod");
 			using MethodCaller = LuaBinderImpl::BindClassMethodFunc<T, FUNC>;
-			LuaRef funcRef = LuaTools::CreateFuncWithUserdata(l, MethodCaller::Caller, func);
+			LuaRef funcRef = LuaRef::CreateFuncWithUserdata(mLuaState, MethodCaller::Caller, func);
 			RegisterFunction(name, funcRef);
 
 			return *this;
@@ -69,17 +82,8 @@ namespace Cjing3D
 
 	private:
 		LuaBindClass(lua_State* l, LuaRef& meta) : 
-			mLuaState(l),
-			mCurrentMeta(meta)
+			LuaBindClassBase(l, meta)
 		{}
-
-		bool RegisterFunction(const std::string& name, LuaRef func)
-		{
-			return true;
-		}
-
-		lua_State * mLuaState = nullptr;
-		LuaRef mCurrentMeta = LuaRef::NULL_REF;
 	};
 
 
