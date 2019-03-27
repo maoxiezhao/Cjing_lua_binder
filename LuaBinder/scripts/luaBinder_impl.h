@@ -3,6 +3,7 @@
 #include "scripts\luaTools.h"
 #include "scripts\luaRef.h"
 #include "scripts\luaObject.h"
+#include "scripts\luaBinder_Arg.h"
 
 namespace Cjing3D
 {
@@ -48,6 +49,8 @@ namespace LuaBinderImpl
 		{
 			F& func = *static_cast<F*>(lua_touserdata(l, lua_upvalueindex(1)));
 			T* obj = LuaObject::GetObject<T>(l, 1);
+			LuaArgValueTuple<Args...> args;
+			LuaInputArgs<Args...>::Get(l, 2, args);
 
 			int resultCount = 0;
 
@@ -70,7 +73,7 @@ namespace LuaBinderImpl
 	struct BindClassMethodFunc<T, R(TF::*)(Args...)> :			// ==> <typename T, typename F, typename R, typename... Args>
 		BindClassMethodFuncCaller<T, R(T::*)(Args...), R, Args...>
 	{
-		// 添加的成员函数仅对当前类的同类或者父类有效
+		// 锟斤拷锟接的筹拷员锟斤拷锟斤拷锟斤拷锟皆碉拷前锟斤拷锟酵拷锟斤拷锟竭革拷锟斤拷锟斤拷效
 		static_assert(std::is_base_of<TF, T>::value);
 		static constexpr int value = 2;
 	};

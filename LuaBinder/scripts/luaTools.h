@@ -51,7 +51,7 @@ namespace LuaTools
 
 	struct BindingUserData
 	{
-		// Èç¹û²»¿ÉÎö¹¹»òÕß´æÔÚÎŞÓÃ(trivially)µÄÎö¹¹º¯ÊıÔòÖ±½Ó´´½¨userdataÑ¹Õ»
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(trivially)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó´ï¿½ï¿½ï¿½userdataÑ¹Õ»
 		template<typename T>
 		static typename std::enable_if<!std::is_destructible<T>::value ||
 			std::is_trivially_destructible<T>::value>::type
