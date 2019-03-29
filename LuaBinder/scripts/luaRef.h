@@ -61,6 +61,8 @@ namespace Cjing3D
 			return v;
 		}
 
+		void SetMetatable(LuaRef& luaRef);
+
 		static LuaRef NULL_REF;
 	private:
 		lua_State * l;
@@ -68,6 +70,8 @@ namespace Cjing3D
 
 	};
 
+	// see LuaTypeMapping.h
+	// define LuaTypeNormalMapping to support normal type mapping lua
 	template<>
 	struct LuaTypeNormalMapping<LuaRef>
 	{

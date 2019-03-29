@@ -33,9 +33,9 @@ LuaRef::LuaRef(LuaRef && other) :
 }
 
 /**
-*	\brief 赋值构造函数
+*	\brief 锟斤拷值锟斤拷锟届函锟斤拷
 *
-*	因为luaref索引必须保持唯一性，这里将other应用的Lua值重新压栈，调用lua_ref创建新的索引
+*	锟斤拷为luaref锟斤拷锟斤拷锟斤拷锟诫保锟斤拷唯一锟皆ｏ拷锟斤拷锟斤将other应锟矫碉拷Lua值锟斤拷锟斤拷压栈锟斤拷锟斤拷锟斤拷lua_ref锟斤拷锟斤拷锟铰碉拷锟斤拷锟斤拷
 */
 LuaRef & LuaRef::operator=(const LuaRef& other)
 {
@@ -143,5 +143,12 @@ void LuaRef::Push() const
 	lua_rawgeti(l, LUA_REGISTRYINDEX, mRef);
 }
 
+void LuaRef::SetMetatable(LuaRef& luaRef)
+{
+	Push();
+	luaRef.Push();
+	lua_setmetatable(l, -2);
+	lua_pop(l, 1);
+}
 
 }

@@ -6,10 +6,8 @@
 
 #include <tuple>
 
-namespace Cjing3D
-{
-namespace LuaBinderImpl
-{
+namespace Cjing3D {
+namespace LuaBinderImpl {
 
 template<typename T>
 struct LuaArgHolder
