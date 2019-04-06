@@ -36,10 +36,10 @@ namespace Cjing3D
 	template<typename T>
 	struct LuaType : 
 		std::conditional<
-		std::is_class<typename std::decay<T>::type>::value &&
-		!(LuaTypeMappingExists<typename std::decay<T>::type>::value),
-			LuaTypeClassMapping<typename std::decay<T>::type>,
-			LuaTypeNormalMapping<typename std::decay<T>::type>>::type
+		std::is_class<typename std::decay<T>::type>::value && 
+			!(LuaTypeMappingExists<typename std::decay<T>::type>::value),
+		LuaTypeClassMapping<typename std::decay<T>::type>,
+		LuaTypeNormalMapping<typename std::decay<T>::type>>::type
 	{};
 
 	inline int GetPositiveIndex(lua_State * l, int index)
@@ -164,4 +164,17 @@ namespace Cjing3D
 		}
 	};
 
+	template<>
+	struct LuaTypeNormalMapping<lua_CFunction>
+	{
+		static void Push(lua_State*l, lua_CFunction value)
+		{
+			lua_pushcfunction(l, value);
+		}
+
+		static lua_CFunction Get(lua_State*l, int index)
+		{
+			return lua_tocfunction(l, index);
+		}
+	};
 }

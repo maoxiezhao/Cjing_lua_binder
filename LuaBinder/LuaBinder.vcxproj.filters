@@ -137,9 +137,6 @@
     <ClCompile Include="scripts\luaTools.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\luaBinder_impl.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
     <ClCompile Include="scripts\luaException.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
@@ -147,6 +144,9 @@
       <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="scripts\luaObject.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\luaInvoke.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
   </ItemGroup>
@@ -244,9 +244,6 @@
     <ClInclude Include="scripts\luaBinder.h">
       <Filter>scripts</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\luaBinder_impl.h">
-      <Filter>scripts</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\luaRef.h">
       <Filter>scripts</Filter>
     </ClInclude>
@@ -263,6 +260,15 @@
       <Filter>scripts</Filter>
     </ClInclude>
     <ClInclude Include="scripts\luaObject.h">
+      <Filter>scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\luaInvoke.h">
+      <Filter>scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\luaBinder_impl.h">
+      <Filter>scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\luaArg.h">
       <Filter>scripts</Filter>
     </ClInclude>
   </ItemGroup>

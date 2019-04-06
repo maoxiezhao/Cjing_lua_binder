@@ -161,7 +161,7 @@
     <ClCompile Include="lua\lzio.c" />
     <ClCompile Include="mian.cpp" />
     <ClCompile Include="scripts\luaBinder.cpp" />
-    <ClCompile Include="scripts\luaBinder_impl.cpp" />
+    <ClCompile Include="scripts\luaInvoke.cpp" />
     <ClCompile Include="scripts\luaContext.cpp" />
     <ClCompile Include="scripts\luaException.cpp" />
     <ClCompile Include="scripts\luaObject.cpp" />
@@ -199,7 +199,9 @@
     <ClInclude Include="lua\lvm.h" />
     <ClInclude Include="lua\lzio.h" />
     <ClInclude Include="scripts\luaBinder.h" />
+    <ClInclude Include="scripts\luaArg.h" />
     <ClInclude Include="scripts\luaBinder_impl.h" />
+    <ClInclude Include="scripts\luaInvoke.h" />
     <ClInclude Include="scripts\luaCommon.h" />
     <ClInclude Include="scripts\luaContext.h" />
     <ClInclude Include="scripts\luaException.h" />

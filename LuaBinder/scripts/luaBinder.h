@@ -34,13 +34,21 @@ namespace Cjing3D
 		{
 			Logger::Info("BindClass");
 			LuaRef currentMeta;
-			LuaBinderImpl::RegisterClass(currentMeta, parentMeta, name);
+			BindClassMeta(currentMeta, parentMeta, name);
 			
 			return LuaBindClass<T, ParentT>(l, currentMeta);
 		}
 
-		LuaBindClass<T, ParentT>& AddConstructor()
+		template<typename ARGS>
+		LuaBindClass<T, ParentT>& AddConstructor(ARGS)
 		{
+			// 目前同时支持 
+			// 1. local obj = CLAZZ(...);
+			// 2. local obj = CLAZZ:new(...);
+
+			mCurrentMeta.RawSet("__call", LuaObjectConstructor<T, ARGS>::Call);
+			mCurrentMeta.RawSet("new",	  LuaObjectConstructor<T, ARGS>::Call);
+
 			Logger::Info("AddConstructor");
 			return *this;
 		}
@@ -61,7 +69,7 @@ namespace Cjing3D
 		LuaBindClass<T, ParentT>& AddMethod(const std::string& name, const FUNC& func)
 		{
 			Logger::Info("AddMethod");
-			using MethodCaller = LuaBinderImpl::BindClassMethodFunc<T, FUNC>;
+			using MethodCaller = BindClassMethodFunc<T, FUNC>;
 			LuaRef funcRef = LuaRef::CreateFuncWithUserdata(mLuaState, MethodCaller::Caller, func);
 			RegisterFunction(name, funcRef);
 

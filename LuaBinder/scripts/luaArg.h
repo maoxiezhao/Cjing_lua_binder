@@ -2,12 +2,10 @@
 
 #include "scripts\luaTools.h"
 #include "scripts\luaRef.h"
-#include "scripts\luaObject.h"
 
 #include <tuple>
 
 namespace Cjing3D {
-namespace LuaBinderImpl {
 
 template<typename T>
 struct LuaArgHolder
@@ -43,7 +41,7 @@ struct LuaArgSetter;
 template<typename T>
 struct LuaArgs
 {
-    static int Get(lua_State*l, int index, LuaArgHolder& holder)
+    static int Get(lua_State*l, int index, LuaArgHolder<T>& holder)
     {
         return LuaArgGetter<T>::Get(l, index, holder);        
     }
@@ -76,5 +74,4 @@ struct LuaInputArgs<P, Args... >
 template<typename... Args>
 using LuaArgValueTuple = std::tuple<typename LuaArgHolder<Args>...>;
 
-}
 }

@@ -32,10 +32,10 @@ private:
 template<typename T, typename F>
 void TestBindingFunction(lua_State*l, T& object, const F& func)
 {
-	using FuncType = LuaBinderImpl::BindClassMethodFunc<T, F>;
-	std::cout << FuncType::value << std::endl;
+	//using FuncType = BindClassMethodFunc<T, F>;
+	//std::cout << FuncType::value << std::endl;
 
-	LuaTools::BindingUserData::PushUserdata<F>(l, func);
+	//LuaTools::BindingUserData::PushUserdata<F>(l, func);
 }
 
 void TestLuaBinding(LuaContext& context)
@@ -45,7 +45,7 @@ void TestLuaBinding(LuaContext& context)
 	// bind class
 	LuaBinder(l)
 		.BeginClass<Gun>("Gun")
-		.AddConstructor()
+		.AddConstructor(_LUA_ARGS_())
 		.AddMethod("Shoot", &Gun::Shoot)
 		.EndClass();
 
