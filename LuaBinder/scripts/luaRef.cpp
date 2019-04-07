@@ -111,6 +111,12 @@ LuaRef LuaRef::CreateGlobalRef(lua_State* l)
 	return CreateRef(l);
 }
 
+LuaRef LuaRef::CreateRefFromPtr(lua_State * l, void * ptr)
+{
+	lua_pushlightuserdata(l, ptr);
+	return CreateRef(l);
+}
+
 bool LuaRef::IsEmpty() const
 {
 	return l == nullptr || (mRef == LUA_REFNIL || mRef == LUA_NOREF);
@@ -137,8 +143,9 @@ void LuaRef::Clear()
 
 void LuaRef::Push() const
 {
-	if (IsEmpty())
+	if (IsEmpty()) {
 		return;
+	}
 
 	lua_rawgeti(l, LUA_REGISTRYINDEX, mRef);
 }

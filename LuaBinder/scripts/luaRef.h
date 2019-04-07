@@ -25,6 +25,7 @@ namespace Cjing3D
 		static LuaRef CreateRef(lua_State*l, int index);
 		static LuaRef CreateTable(lua_State* l, int narray = 0, int nrec = 0);
 		static LuaRef CreateGlobalRef(lua_State* l);
+		static LuaRef CreateRefFromPtr(lua_State*l, void* ptr);
 
 		template<typename T>
 		static LuaRef CreateFuncWithUserdata(lua_State*l, lua_CFunction func, const T& userdata)
@@ -89,8 +90,7 @@ namespace Cjing3D
 
 		static LuaRef Get(lua_State*l, int index)
 		{
-	
-			if (!lua_isnil(l, index))
+			if (lua_isnil(l, index))
 			{
 				return LuaRef::NULL_REF;
 			}

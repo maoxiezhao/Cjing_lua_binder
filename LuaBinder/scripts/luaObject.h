@@ -11,7 +11,6 @@ namespace Cjing3D
 	// 实现LuaObjectConstructor::Call时通过typenam...Args来解析各个参数，
 	// AddConstructor 将传入一个函数指针，参数为AddConstructor传入的参数，
 	// 定义为__args(*)(__VA_ARGS__)
-
 	struct _lua_args {};
 
 	#define _LUA_ARGS_TYPE(...) _lua_args(*)(__VA_ARGS__) 
@@ -74,6 +73,16 @@ namespace Cjing3D
 			return static_cast<T*>(GetObject(l, index, classID)->GetObjectPtr());
 		}
 
+		// 分配userdata，同时设置metatable
+		template<typename T>
+		static void* Allocate(lua_State*l, void* classID)
+		{
+			void* mem = lua_newuserdata(l, sizeof(T));
+			lua_rawgetp(l, LUA_REGISTRYINDEX, classID);
+			lua_setmetatable(l, -2);
+			return mem;
+		}
+
 	private:
 		static LuaObject* GetObject(lua_State*l, int index, void* classID)
 		{
@@ -89,7 +98,8 @@ namespace Cjing3D
 		template<typename... Args>
 		static void Push(lua_State* l, std::tuple<Args...>& args)
 		{
-			void *mem = nullptr;
+			void* classID = LuaObjectIDGenerator<T>::GetID();
+			void *mem = Allocate<T>(l, classID);
 			LuaHandleObject<T>* obj = new(mem) LuaHandleObject<T>();
 			ClassStructorCaller<T>::Call(obj->GetObjectPtr(), args);
 		}

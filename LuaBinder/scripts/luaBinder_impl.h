@@ -58,7 +58,7 @@ namespace Cjing3D
 	inline bool BindClassMeta(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name)
 	{
 		LuaRef ref = parentMeta.RawGet(name);
-		if (ref != LuaRef::NULL_REF)
+		if (!ref.IsEmpty())
 		{
 			currentMeta = ref;
 			return false;
