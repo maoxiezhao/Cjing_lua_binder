@@ -7,6 +7,8 @@
 
 namespace Cjing3D
 {
+	class LuaObject;
+
 	// 为了支持在编译期，通过AddConstructor中传入参数的不同，来
 	// 实现LuaObjectConstructor::Call时通过typenam...Args来解析各个参数，
 	// AddConstructor 将传入一个函数指针，参数为AddConstructor传入的参数，
@@ -40,7 +42,12 @@ namespace Cjing3D
 	{
 		static int Call(lua_State*l)
 		{
-			return 0;
+			return LuaTools::ExceptionBoundary(l, [&] {
+				LuaObject* obj = LuaObject::GetLuaObject<T>(l, 1);
+				obj->~LuaObject();
+
+				return 0;
+			});
 		}
 	};
 
@@ -61,16 +68,27 @@ namespace Cjing3D
 	class LuaObject
 	{
 	public:
-		void* GetObjectPtr()
+		LuaObject() {}
+		virtual ~LuaObject() {}
+
+		virtual void* GetObjectPtr()
 		{
 			return nullptr;
+		}
+
+		template<typename T>
+		static LuaObject* GetLuaObject(lua_State*l, int index)
+		{
+			void* classID = LuaObjectIDGenerator<T>::GetID();
+			return GetLuaObject(l, index, classID);
 		}
 
 		template<typename T>
 		static T* GetObject(lua_State*l, int index)
 		{
 			void* classID = LuaObjectIDGenerator<T>::GetID();
-			return static_cast<T*>(GetObject(l, index, classID)->GetObjectPtr());
+			LuaObject* obj = GetLuaObject(l, index, classID);
+			return obj ? static_cast<T*>(obj->GetObjectPtr()) : nullptr;
 		}
 
 		// 分配userdata，同时设置metatable
@@ -84,17 +102,24 @@ namespace Cjing3D
 		}
 
 	private:
-		static LuaObject* GetObject(lua_State*l, int index, void* classID)
-		{
-			return nullptr;
-		}
+		static LuaObject* GetLuaObject(lua_State*l, int index, void* classID);
 	};
 
-	// lua manage
+	// lua manage, create by lua, destory by lua gc
 	template<typename T>
 	class LuaHandleObject : public LuaObject
 	{
 	public:
+		LuaHandleObject()
+		{
+		}
+
+		~LuaHandleObject()
+		{
+			T* obj = static_cast<T*>(GetObjectPtr());
+			obj->~T();
+		}
+
 		template<typename... Args>
 		static void Push(lua_State* l, std::tuple<Args...>& args)
 		{
@@ -103,5 +128,17 @@ namespace Cjing3D
 			LuaHandleObject<T>* obj = new(mem) LuaHandleObject<T>();
 			ClassStructorCaller<T>::Call(obj->GetObjectPtr(), args);
 		}
+
+		virtual void* GetObjectPtr()
+		{
+			return &mData[0];
+		}
+
+	private:
+		// 还需要考虑到对象在内存中对齐模式
+		// 当大于alignof（void*)时，必定是指针，当小于时可能是基础类型（或部分包含基础类型的结构体）
+		/*using ALIGN_TPYP = std::conditional<alignof(T) <= alignof(void*), T, void*>::type;
+		static constexpr int MEM_PADDING = alignof(T) <= alignof(ALIGN_TPYP) ? 0 : alignof(T) - alignof(ALIGN_TPYP) + 1;*/
+		unsigned char mData[sizeof(T)];
 	};
 }

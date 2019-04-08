@@ -18,6 +18,8 @@ namespace Cjing3D
 		{}
 
 	protected:
+		static bool BindClassMeta(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name, void* currentClassID);
+
 		bool RegisterFunction(const std::string& name, LuaRef func);
 
 		lua_State * mLuaState = nullptr;
@@ -34,7 +36,10 @@ namespace Cjing3D
 		{
 			Logger::Info("BindClass");
 			LuaRef currentMeta;
-			BindClassMeta(currentMeta, parentMeta, name);
+			if (BindClassMeta(currentMeta, parentMeta, name, LuaObjectIDGenerator<T>::GetID()))
+			{
+				currentMeta.RawGet("__CLASS").RawSet("__gc", LuaObjectDestructor<T>::Call);
+			}
 			
 			return LuaBindClass<T, ParentT>(l, currentMeta);
 		}

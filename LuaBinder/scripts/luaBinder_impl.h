@@ -45,41 +45,4 @@ namespace Cjing3D
 		static_assert(std::is_base_of<TF, T>::value);
 		static constexpr int value = 2;
 	};
-
-	/////////////////////////////////////////////////////////////////////////////////////////
-
-	struct BindClassMetaMethod
-	{
-		static int index(lua_State* l);
-		static int newIndex(lua_State* l);
-		static int gc(lua_State* l);
-	};
-
-	inline bool BindClassMeta(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name)
-	{
-		LuaRef ref = parentMeta.RawGet(name);
-		if (!ref.IsEmpty())
-		{
-			currentMeta = ref;
-			return false;
-		}
-
-		lua_State* l = parentMeta.GetLuaState();
-
-		LuaRef classTable = LuaRef::CreateTable(l);
-		classTable.SetMetatable(classTable);
-
-		LuaRef staticClassTable = LuaRef::CreateTable(l);
-		staticClassTable.RawSet("__CLASS", classTable);
-
-		parentMeta.RawSet(name, staticClassTable);
-
-		// no use now.
-		LuaRef constClassTable = LuaRef::CreateTable(l);
-		constClassTable.SetMetatable(constClassTable);
-		staticClassTable.RawSet("__CONST", constClassTable);
-
-		currentMeta = staticClassTable;
-		return true;
-	}
 }
