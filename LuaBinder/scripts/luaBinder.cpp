@@ -35,12 +35,15 @@ bool LuaBindClassBase::BindClassMeta(LuaRef & currentMeta, LuaRef & parentMeta, 
 	return true;
 }
 
-bool LuaBindClassBase::RegisterFunction(const std::string & name, LuaRef func)
+void LuaBindClassBase::RegisterStaticFunction(const std::string & name, LuaRef func)
+{
+	mCurrentMeta.RawSet(name, func);
+}
+
+void LuaBindClassBase::RegisterMethod(const std::string & name, LuaRef func)
 {
 	LuaRef metaClass = mCurrentMeta.RawGet("__CLASS");
 	metaClass.RawSet(name, func);
-
-	return true;
 }
 
 }

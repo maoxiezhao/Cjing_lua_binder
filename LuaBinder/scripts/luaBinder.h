@@ -6,8 +6,8 @@
 
 namespace Cjing3D
 {
-	// 1.µ±bindClassÊ±£¬´´½¨3¸ö±í£¬ÎªÁËÊµÏÖ²»Í¬µÄ·ÃÎÊ¿ØÖÆ£¬·Ö±ð´´½¨class, const_class, static_class
-	//  classºÍconst_class¶¼»áÒýÓÃµ½static_class, ¶østatic_classÔò°üº¬ÁËclassºÍconst_class
+	// 1.ï¿½ï¿½bindClassÊ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Êµï¿½Ö²ï¿½Í¬ï¿½Ä·ï¿½ï¿½Ê¿ï¿½ï¿½Æ£ï¿½ï¿½Ö±ð´´½ï¿½class, const_class, static_class
+	//  classï¿½ï¿½const_classï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½static_class, ï¿½ï¿½static_classï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½classï¿½ï¿½const_class
 
 	class LuaBindClassBase
 	{
@@ -20,7 +20,8 @@ namespace Cjing3D
 	protected:
 		static bool BindClassMeta(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name, void* currentClassID);
 
-		bool RegisterFunction(const std::string& name, LuaRef func);
+		void RegisterStaticFunction(const std::string& name, LuaRef func);
+		void RegisterMethod(const std::string& name, LuaRef func);
 
 		lua_State * mLuaState = nullptr;
 		LuaRef mCurrentMeta = LuaRef::NULL_REF;
@@ -47,7 +48,6 @@ namespace Cjing3D
 		template<typename ARGS>
 		LuaBindClass<T, ParentT>& AddConstructor(ARGS)
 		{
-			// Ä¿Ç°Í¬Ê±Ö§³Ö 
 			// 1. local obj = CLAZZ(...);
 			// 2. local obj = CLAZZ:new(...);
 
@@ -64,9 +64,13 @@ namespace Cjing3D
 			return *this;
 		}
 
-		LuaBindClass<T, ParentT>& AddFunction()
+		LuaBindClass<T, ParentT>& AddFunction(const std::string& name, const FUNC& func)
 		{
 			Logger::Info("AddFunction");
+			using FunctionCaller = BindClassStaticFunc<FUNC>;
+			LuaRef funcRef = LuaRef::CreateFuncWithUserdata(mLuaState, &FunctionCaller::Caller, func);
+			RegisterStaticFunction(l, funcRef);
+
 			return *this;
 		}
 
@@ -75,8 +79,8 @@ namespace Cjing3D
 		{
 			Logger::Info("AddMethod");
 			using MethodCaller = BindClassMethodFunc<T, FUNC>;
-			LuaRef funcRef = LuaRef::CreateFuncWithUserdata(mLuaState, MethodCaller::Caller, func);
-			RegisterFunction(name, funcRef);
+			LuaRef funcRef = LuaRef::CreateFuncWithUserdata(mLuaState, &MethodCaller::Caller, func);
+			RegisterMethod(name, funcRef);
 
 			return *this;
 		}
@@ -98,7 +102,6 @@ namespace Cjing3D
 			LuaBindClassBase(l, meta)
 		{}
 	};
-
 
 	class LuaBinder
 	{

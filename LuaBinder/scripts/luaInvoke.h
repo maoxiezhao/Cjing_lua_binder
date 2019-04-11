@@ -59,4 +59,38 @@ namespace Cjing3D
 		}
 	};
 
+
+	// Class Method Caller
+	template<typename FUNC, typename R, typename TUPLE, size_t N, size_t... INDEX>
+	struct StaticFunctionDispatchCaller : StaticFunctionDispatchCaller<T, FUNC, R, TUPLE, N - 1, N - 1, INDEX...> {};
+
+	template<typename FUNC, typename R, typename TUPLE, size_t... INDEX>
+	struct StaticFunctionDispatchCaller<FUNC, R, TUPLE, 0, INDEX...>
+	{
+		static R Call(T* t, const FUNC& func, TUPLE& args)
+		{
+			return func(std::get<INDEX>(args).Get()...);
+		}
+	};
+	
+	template<typename FUNC, typename R, typename... Args>
+	struct StaticFunctionCaller
+	{
+		static int Call(lua_State*l, const FUNC& func, std::tuple<Args...>& args)
+		{
+			R result = StaticFunctionDispatchCaller<FUNC, R, std::tuple<Args...>, sizeof...(Args)>::Call(func, args);
+			LuaTools::Push<R>(l, result);
+			return 1;
+		}
+	};
+	template<typename FUNC, typename... Args>
+	struct StaticFunctionCaller<FUNC, void, Args...>
+	{
+		static int Call(lua_State*l, const FUNC& func, std::tuple<Args...>& args)
+		{
+			StaticFunctionDispatchCaller<FUNC, void, std::tuple<Args...>, sizeof...(Args)>::Call(func, args);
+			return 0;
+		}
+	};
+	
 }
