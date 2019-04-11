@@ -62,12 +62,12 @@ namespace Cjing3D
 
 	// Class Method Caller
 	template<typename FUNC, typename R, typename TUPLE, size_t N, size_t... INDEX>
-	struct StaticFunctionDispatchCaller : StaticFunctionDispatchCaller<T, FUNC, R, TUPLE, N - 1, N - 1, INDEX...> {};
+	struct StaticFunctionDispatchCaller : StaticFunctionDispatchCaller<FUNC, R, TUPLE, N - 1, N - 1, INDEX...> {};
 
 	template<typename FUNC, typename R, typename TUPLE, size_t... INDEX>
 	struct StaticFunctionDispatchCaller<FUNC, R, TUPLE, 0, INDEX...>
 	{
-		static R Call(T* t, const FUNC& func, TUPLE& args)
+		static R Call(const FUNC& func, TUPLE& args)
 		{
 			return func(std::get<INDEX>(args).Get()...);
 		}

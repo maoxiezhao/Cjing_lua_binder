@@ -39,7 +39,7 @@ namespace Cjing3D
 			LuaRef currentMeta;
 			if (BindClassMeta(currentMeta, parentMeta, name, LuaObjectIDGenerator<T>::GetID()))
 			{
-				currentMeta.RawGet("__CLASS").RawSet("__gc", LuaObjectDestructor<T>::Call);
+				currentMeta.RawGet("__CLASS").RawSet("__gc", &LuaObjectDestructor<T>::Call);
 			}
 			
 			return LuaBindClass<T, ParentT>(l, currentMeta);
@@ -64,12 +64,13 @@ namespace Cjing3D
 			return *this;
 		}
 
+		template<typename FUNC>
 		LuaBindClass<T, ParentT>& AddFunction(const std::string& name, const FUNC& func)
 		{
 			Logger::Info("AddFunction");
 			using FunctionCaller = BindClassStaticFunc<FUNC>;
 			LuaRef funcRef = LuaRef::CreateFuncWithUserdata(mLuaState, &FunctionCaller::Caller, func);
-			RegisterStaticFunction(l, funcRef);
+			RegisterStaticFunction(name, funcRef);
 
 			return *this;
 		}

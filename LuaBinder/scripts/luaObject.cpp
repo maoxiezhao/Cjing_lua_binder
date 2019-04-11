@@ -2,6 +2,53 @@
 
 namespace Cjing3D
 {
+	bool LuaObject::CheckLuaObjectMetatableValid(lua_State * l, int index)
+	{
+		// check current class
+		// 1.get current_metatable
+		// 2.get classID frome metatable
+		// 3.get target_metatable from lua_registryindex and compare with current_metatable
+
+		index = LuaTools::GetPositiveIndex(l, index);
+		lua_getmetatable(l, index);
+		lua_rawgetp(l, -1, LuaObjectIDGenerator<LuaObject>::GetID());
+		// stack: obj ... meta luaObjectID	
+		lua_rawget(l, LUA_REGISTRYINDEX);
+
+		bool result = (lua_rawequal(l, -1, -2));
+		lua_pop(l, 2);
+		return result;
+	}
+
+	int LuaObject::MetaFuncIndex(lua_State * l)
+	{
+		if (!CheckLuaObjectMetatableValid(l, 1))
+		{
+			LuaException::Error(l, "Except userdata, got ." +
+				std::string(lua_typename(l, lua_type(l, 1))));
+			return 1;
+		}
+		
+		// find in metatalbe first
+		lua_getmetatable(l, 1);
+		lua_pushvalue(l, 2); // push key
+		lua_rawget(l, -2);
+
+		return 1;
+	}
+
+	int LuaObject::MetaFuncNewIndex(lua_State * l)
+	{
+		if (!CheckLuaObjectMetatableValid(l, 1))
+		{
+			LuaException::Error(l, "Except userdata, got ." +
+				std::string(lua_typename(l, lua_type(l, 1))));
+			return 1;
+		}
+
+		return 1;
+	}
+
 	LuaObject * LuaObject::GetLuaObject(lua_State * l, int index, void * classID)
 	{
 		index = LuaTools::GetPositiveIndex(l, index);
@@ -9,14 +56,14 @@ namespace Cjing3D
 		{
 			LuaException::Error(l, "Except userdata, got ." + 
 				std::string(lua_typename(l, lua_type(l, index))));
-			return;
+			return nullptr;
 		}
 
 		lua_rawgetp(l, LUA_REGISTRYINDEX, classID);
 		if (!lua_istable(l, -1))
 		{
 			LuaException::Error(l, "Invalid class without metatable.");
-			return;
+			return nullptr;
 		}
 
 		// check class
@@ -25,12 +72,12 @@ namespace Cjing3D
 		if (!lua_istable(l, -1))
 		{
 			LuaException::Error(l, "Invalid obj without metatable.");
-			return;
+			return nullptr;
 		}
 
 		// except_meta crrent_meta
 		bool is_valid = false;
-		while(lua_isnil(l, -1))
+		while(!lua_isnil(l, -1))
 		{
 			if (lua_rawequal(l, -1, -2))
 			{

@@ -13,14 +13,20 @@ bool LuaBindClassBase::BindClassMeta(LuaRef & currentMeta, LuaRef & parentMeta, 
 
 	lua_State* l = parentMeta.GetLuaState();
 
+	// class id
+	LuaRef classIDRef = LuaRef::CreateRefFromPtr(l, currentClassID);
+
+	// create class metatable
 	LuaRef classTable = LuaRef::CreateTable(l);
 	classTable.SetMetatable(classTable);
+	classTable.RawSet("__index", &LuaObject::MetaFuncIndex);
+	classTable.RawSet("__newindex", &LuaObject::MetaFuncNewIndex);
+	classTable.RawSetp(LuaObjectIDGenerator<LuaObject>::GetID(), classIDRef);
 
 	LuaRef staticClassTable = LuaRef::CreateTable(l);
 	staticClassTable.RawSet("__CLASS", classTable);
 
 	// rawset metatable into registryIndex
-	LuaRef classIDRef = LuaRef::CreateRefFromPtr(l, currentClassID);
 	LuaRef registry = LuaRef::CreateRef(l, LUA_REGISTRYINDEX);
 	registry.RawSet(classIDRef, classTable);
 

@@ -20,7 +20,7 @@ namespace Cjing3D
 				LuaArgValueTuple<Args...> args;
 				LuaInputArgs<Args...>::Get(l, 2, args);
 
-				int resultCount = ClassMethodCaller<T, F, R, typename LuaArgHolder<Args>...>::Call(l, obj, func, args);
+				int resultCount = ClassMethodCaller<T, F, R, LuaArgHolder<Args>...>::Call(l, obj, func, args);
 				return resultCount;
 			});
 		}
@@ -52,7 +52,7 @@ namespace Cjing3D
 				LuaArgValueTuple<Args...> args;
 				LuaInputArgs<Args...>::Get(l, 1, args);
 
-				int resultCount = StaticFunctionCaller<F, R, typename LuaArgHolder<Args>...>::Call(l, func, args);
+				int resultCount = StaticFunctionCaller<F, R, LuaArgHolder<Args>...>::Call(l, func, args);
 				return resultCount;
 			});
 		}
@@ -62,6 +62,6 @@ namespace Cjing3D
 	struct BindClassStaticFunc{};
 
 	template<typename R, typename... Args>
-	struct BindClassStaticFunc<R(*)(Args...), Args...> : 
-		BindClassMethodFunc<R(*)(Args...), R, Args...> {};
+	struct BindClassStaticFunc<R(*)(Args...), R(*)(Args...)> :
+		BindClassStaicFuncCaller<R(*)(Args...), R, Args...> {};
 }

@@ -17,8 +17,6 @@ namespace Cjing3D
 
 	#define _LUA_ARGS_TYPE(...) _lua_args(*)(__VA_ARGS__) 
 	#define  _LUA_ARGS_(...) static_cast<_LUA_ARGS_TYPE(__VA_ARGS__)>(nullptr)
-
-
 	template<typename T, typename ARGS>
 	struct LuaObjectConstructor;
 
@@ -44,7 +42,9 @@ namespace Cjing3D
 		{
 			return LuaTools::ExceptionBoundary(l, [&] {
 				LuaObject* obj = LuaObject::GetLuaObject<T>(l, 1);
-				obj->~LuaObject();
+				if (obj != nullptr) {
+					obj->~LuaObject();
+				}
 
 				return 0;
 			});
@@ -100,6 +100,11 @@ namespace Cjing3D
 			lua_setmetatable(l, -2);
 			return mem;
 		}
+
+		// __index and __newindex
+		static bool CheckLuaObjectMetatableValid(lua_State* l, int index);
+		static int MetaFuncIndex(lua_State* l);
+		static int MetaFuncNewIndex(lua_State* l);
 
 	private:
 		static LuaObject* GetLuaObject(lua_State*l, int index, void* classID);
