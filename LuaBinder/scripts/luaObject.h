@@ -51,6 +51,7 @@ namespace Cjing3D
 		}
 	};
 
+	///////////////////////////////////////////////////////////////////////////
 	// lua base object
 	class LuaObject
 	{
@@ -117,7 +118,7 @@ namespace Cjing3D
 		static void Push(lua_State* l, std::tuple<Args...>& args)
 		{
 			void* classID = ObjectIDGenerator<T>::GetID();
-			void *mem = Allocate<T>(l, classID);
+			void *mem = Allocate<LuaHandleObject<T>>(l, classID);
 			LuaHandleObject<T>* obj = new(mem) LuaHandleObject<T>();
 			ClassStructorCaller<T>::Call(obj->GetObjectPtr(), args);
 		}
@@ -127,7 +128,7 @@ namespace Cjing3D
 		static void Push(lua_State* l, const T& obj)
 		{
 			void* classID = ObjectIDGenerator<T>::GetID();
-			void *mem = Allocate<T>(l, classID);
+			void *mem = Allocate<LuaHandleObject<T>>(l, classID);
 			LuaHandleObject<T>* lua_obj = new(mem) LuaHandleObject<T>();
 			new(lua_obj->GetObjectPtr()) T(obj);
 		}
@@ -143,6 +144,33 @@ namespace Cjing3D
 		/*using ALIGN_TPYP = std::conditional<alignof(T) <= alignof(void*), T, void*>::type;
 		static constexpr int MEM_PADDING = alignof(T) <= alignof(ALIGN_TPYP) ? 0 : alignof(T) - alignof(ALIGN_TPYP) + 1;*/
 		unsigned char mData[sizeof(T)];
+	};
+
+	// 指针对象必须在C++创建，生命周期由C++来管理，当GC时会调用对象的析构函数
+	template<typename T>
+	class LuaObjectPtr : public LuaObject
+	{
+	public:
+		LuaObjectPtr(T& obj) :
+			mObjectPtr(&ojb)
+		{
+		}
+
+		// 指针对象不会创建新的实例，而只是创建一个新的LuaObjectPtr指向对象
+		static void Push(lua_State* l, const T& obj)
+		{
+			void* classID = ObjectIDGenerator<T>::GetID();
+			void *mem = Allocate<LuaObjectPtr<T>>(l, classID);
+			new(mem) LuaObjectPtr<T>(obj);
+		}
+
+		virtual void* GetObjectPtr()
+		{
+			return mObjectPtr;
+		}
+
+	private:
+		void* mObjectPtr = nullptr;
 	};
 
 	///////////////////////////////////////////////////////////////////////////
@@ -173,7 +201,7 @@ namespace Cjing3D
 	{
 		static void Push(lua_State*l, const T&value)
 		{
-
+			LuaObjectPtr<T>::Push(l, value);
 		}
 
 		static T& Get(lua_State*l, int index)
