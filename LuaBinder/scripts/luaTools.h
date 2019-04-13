@@ -49,6 +49,7 @@ namespace LuaTools
 		return 0;
 	}
 
+	// 轻量级的UserData绑定，一般用于创建一个函数指针对象
 	struct BindingUserData
 	{
 		template<typename T>

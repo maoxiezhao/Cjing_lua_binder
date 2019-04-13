@@ -6,8 +6,8 @@
 
 namespace Cjing3D
 {
-	// 1.��bindClassʱ������3������Ϊ��ʵ�ֲ�ͬ�ķ��ʿ��ƣ��ֱ𴴽�class, const_class, static_class
-	//  class��const_class�������õ�static_class, ��static_class�������class��const_class
+	// LuaBindClass在bindClass时会创建一个StaticMeta和一个ClassMeta,后者在创建userdata时会setmetatable
+	// 同时RegisterStaticFunction会将函数设置在StaticMeta中，而RegisterMethod会将成员函数设置在classmeta
 
 	class LuaBindClassBase
 	{
@@ -37,7 +37,7 @@ namespace Cjing3D
 		{
 			Logger::Info("BindClass");
 			LuaRef currentMeta;
-			if (BindClassMeta(currentMeta, parentMeta, name, LuaObjectIDGenerator<T>::GetID()))
+			if (BindClassMeta(currentMeta, parentMeta, name, ObjectIDGenerator<T>::GetID()))
 			{
 				currentMeta.RawGet("__CLASS").RawSet("__gc", &LuaObjectDestructor<T>::Call);
 			}

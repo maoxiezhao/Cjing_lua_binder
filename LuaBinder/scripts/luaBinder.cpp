@@ -21,7 +21,7 @@ bool LuaBindClassBase::BindClassMeta(LuaRef & currentMeta, LuaRef & parentMeta, 
 	classTable.SetMetatable(classTable);
 	classTable.RawSet("__index", &LuaObject::MetaFuncIndex);
 	classTable.RawSet("__newindex", &LuaObject::MetaFuncNewIndex);
-	classTable.RawSetp(LuaObjectIDGenerator<LuaObject>::GetID(), classIDRef);
+	classTable.RawSetp(ObjectIDGenerator<LuaObject>::GetID(), classIDRef);
 
 	LuaRef staticClassTable = LuaRef::CreateTable(l);
 	staticClassTable.RawSet("__CLASS", classTable);

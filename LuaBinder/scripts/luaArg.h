@@ -23,14 +23,27 @@ struct LuaArgHolder<T&>
     T* mValue;
 };
 
-// 从lua stack 中取出数据，并将数据赋给LuaArgHover
 template<typename T>
+struct LuaArgTypeTraits 
+{
+	// 不可直接使用LuaArgHolder<T>，对于func(const std::string& str)
+	// 会偏特化为LuaArgHolder<T&>，而LuaType<std::string>::Get则只会返回std::string而出错
+	// 故这里使用推导以LuaType<std::string>::Get的返回类型为准
+
+	using ArgType = typename std::result_of<decltype(&LuaType<T>::Get)(lua_State*, int)>::type;	 
+	using ArgHolderType = LuaArgHolder<ArgType>;
+};
+
+// 从lua stack 中取出数据，并将数据赋给LuaArgHover
+template<typename ArgTypeTraits>
 struct LuaArgGetter
 {
-    static int Get(lua_State*l, int index, LuaArgHolder<T>& holder)
+	using ArgHolderType = typename ArgTypeTraits::ArgHolderType;
+	using ArgType = typename ArgTypeTraits::ArgType;
+
+    static int Get(lua_State*l, int index, ArgHolderType& holder)
     {
-        auto& value = LuaTools::Get<T>(l, index);
-        holder.Set(value);
+        holder.Set(LuaTools::Get<ArgType>(l, index));
         return 1;
     }
 };
@@ -41,9 +54,12 @@ struct LuaArgSetter;
 template<typename T>
 struct LuaArgs
 {
-    static int Get(lua_State*l, int index, LuaArgHolder<T>& holder)
+	using LuaArgTraits = LuaArgTypeTraits<T>;
+	using LuaArgHolderType = typename LuaArgTraits::ArgHolderType;
+
+    static int Get(lua_State*l, int index, LuaArgHolderType& holder)
     {
-        return LuaArgGetter<T>::Get(l, index, holder);        
+        return LuaArgGetter<LuaArgTraits>::Get(l, index, holder);
     }
 };
 
@@ -72,6 +88,6 @@ struct LuaInputArgs<P, Args... >
 };
 
 template<typename... Args>
-using LuaArgValueTuple = std::tuple<typename LuaArgHolder<Args>...>;
+using LuaArgValueTuple = std::tuple<typename LuaArgs<Args>::LuaArgHolderType...>;
 
 }

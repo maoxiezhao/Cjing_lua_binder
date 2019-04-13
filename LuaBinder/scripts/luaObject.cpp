@@ -11,7 +11,7 @@ namespace Cjing3D
 
 		index = LuaTools::GetPositiveIndex(l, index);
 		lua_getmetatable(l, index);
-		lua_rawgetp(l, -1, LuaObjectIDGenerator<LuaObject>::GetID());
+		lua_rawgetp(l, -1, ObjectIDGenerator<LuaObject>::GetID());
 		// stack: obj ... meta luaObjectID	
 		lua_rawget(l, LUA_REGISTRYINDEX);
 

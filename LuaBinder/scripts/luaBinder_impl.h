@@ -52,7 +52,7 @@ namespace Cjing3D
 				LuaArgValueTuple<Args...> args;
 				LuaInputArgs<Args...>::Get(l, 1, args);
 
-				int resultCount = StaticFunctionCaller<F, R, LuaArgHolder<Args>...>::Call(l, func, args);
+				int resultCount = StaticFunctionCaller<F, R, typename LuaArgs<Args>::LuaArgHolderType...>::Call(l, func, args);
 				return resultCount;
 			});
 		}

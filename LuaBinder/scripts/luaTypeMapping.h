@@ -8,12 +8,20 @@
 
 namespace Cjing3D
 {
+	// NOTE:
+	// 对于对象的Push和Get
+	// 默认类型和LuaRef已经通过LuaTypeNormalMapping<T>来设置，不同特化结构体提供了Push和Get接口
+	// 而对于用户自定义的数据，需要通过LuaTypeClassMapping来映射，不过在LuaObject中已经提供了一个
+	// 通用的映射实现
+
+	// 对于额外需要映射的类型或者对象，可以通过重新特化实现LuaTypeNormalMapping或LuaTypeClassMapping实现
+
 	//----------------------------------base define----------------------------------------
 
 	template<typename T>
 	struct LuaTypeNormalMapping;
 
-	template<typename T>
+	template<typename T, bool IsRef>
 	struct LuaTypeClassMapping;
 
 	struct LuaTypeExists
@@ -38,7 +46,7 @@ namespace Cjing3D
 		std::conditional<
 		std::is_class<typename std::decay<T>::type>::value && 
 			!(LuaTypeMappingExists<typename std::decay<T>::type>::value),
-		LuaTypeClassMapping<typename std::decay<T>::type>,
+		LuaTypeClassMapping<typename std::decay<T>::type, std::is_reference<T>::value>,
 		LuaTypeNormalMapping<typename std::decay<T>::type>>::type
 	{};
 
@@ -151,7 +159,7 @@ namespace Cjing3D
 			if (!lua_isstring(l, index))
 				LuaException::ArgError(l, index, std::string("Excepted:String, got ") + luaL_typename(l, index));
 
-			return lua_tostring(l, index);
+			return std::string(lua_tostring(l, index));
 		}
 	};
 

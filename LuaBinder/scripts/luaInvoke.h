@@ -59,7 +59,7 @@ namespace Cjing3D
 		}
 	};
 
-
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Class Method Caller
 	template<typename FUNC, typename R, typename TUPLE, size_t N, size_t... INDEX>
 	struct StaticFunctionDispatchCaller : StaticFunctionDispatchCaller<FUNC, R, TUPLE, N - 1, N - 1, INDEX...> {};

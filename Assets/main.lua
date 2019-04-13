@@ -7,6 +7,8 @@ function Main()
 
     local gun = Gun:new();
     gun:Shoot();
+
+    Gun.PickUp("AAABBCC");
 end 
 
 Main();
