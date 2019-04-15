@@ -149,6 +149,9 @@
     <ClCompile Include="scripts\luaInvoke.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
+    <ClCompile Include="TODO.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\debug.h">

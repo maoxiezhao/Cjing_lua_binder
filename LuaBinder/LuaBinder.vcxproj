@@ -167,6 +167,7 @@
     <ClCompile Include="scripts\luaObject.cpp" />
     <ClCompile Include="scripts\luaRef.cpp" />
     <ClCompile Include="scripts\luaTools.cpp" />
+    <ClCompile Include="TODO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\debug.h" />
