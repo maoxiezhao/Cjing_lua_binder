@@ -28,6 +28,13 @@ namespace Cjing3D
 		static LuaRef CreateRefFromPtr(lua_State*l, void* ptr);
 
 		template<typename T>
+		static LuaRef CreateRefFromValue(lua_State*l, const T& value)
+		{
+			LuaTools::Push(l, value);
+			return CreateRef(l);
+		}
+
+		template<typename T>
 		static LuaRef CreateFuncWithUserdata(lua_State*l, lua_CFunction func, const T& userdata)
 		{
 			LuaTools::BindingUserData::PushUserdata<T>(l, userdata);
@@ -39,6 +46,7 @@ namespace Cjing3D
 		int  GetRef()const;
 		void Push()const;
 		void Clear();
+		bool IsFunction()const;
 		lua_State* GetLuaState()const;
 
 		template<typename V, typename K>

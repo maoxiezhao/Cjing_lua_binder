@@ -161,6 +161,7 @@
     <ClCompile Include="lua\lzio.c" />
     <ClCompile Include="mian.cpp" />
     <ClCompile Include="scripts\luaBinder.cpp" />
+    <ClCompile Include="scripts\luaBinder_impl.cpp" />
     <ClCompile Include="scripts\luaInvoke.cpp" />
     <ClCompile Include="scripts\luaContext.cpp" />
     <ClCompile Include="scripts\luaException.cpp" />
@@ -210,6 +211,9 @@
     <ClInclude Include="scripts\luaRef.h" />
     <ClInclude Include="scripts\luaTools.h" />
     <ClInclude Include="scripts\luaTypeMapping.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\main.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

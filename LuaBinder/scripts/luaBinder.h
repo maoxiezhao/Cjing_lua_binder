@@ -104,6 +104,83 @@ namespace Cjing3D
 		{}
 	};
 
+	// Binding Module
+	class LuaBindModuleBase
+	{
+	public:
+		LuaBindModuleBase(LuaRef& meta) :
+			mCurrentMeta(meta)
+		{}
+
+		LuaBindModuleBase(lua_State* l, LuaRef& meta, const std::string& name);
+
+	protected:
+		void SetGetter(const std::string& name, const LuaRef& getter);
+		void SetReadOnly(const std::string& name);
+
+		LuaRef mCurrentMeta = LuaRef::NULL_REF;
+		std::string mName;
+	};
+	
+	template<typename ParentT>
+	class LuaBindModule : public LuaBindModuleBase
+	{
+	public:
+		LuaBindModule(LuaRef& meta, const std::string& name) :
+			LuaBindModuleBase(meta, name),
+			mName(name) 
+		{}
+
+		LuaBindModule<ParentT>& AddEnum(const std::string& name, int value)
+		{
+			return AddConstant(name, value);
+		}
+
+		template<typename V>
+		LuaBindModule<ParentT>& AddConstant(const std::string& name, const V& value)
+		{
+			LuaRef ref = LuaRef::CreateRefFromValue(l, value);
+			if (ref.IsFunction() == false)
+			{
+
+			}
+
+			return *this;
+		}
+
+		template<typename V>
+		LuaBindModule<ParentT>& AddVariable(const std::string& name, const V& value)
+		{
+			return *this;
+		}
+
+		template<typename FUNC>
+		LuaBindModule<ParentT>& (const std::string& name, const FUNC& func)
+		{
+			return *this;
+		}
+
+		template<typename T>
+		LuaBindClass<T, LuaBindModule<ParentT>> BeginClass(const std::string& name)
+		{
+			return LuaBindClass<T, LuaBindModule<ParentT>>::BindClass(mLuaState, mCurrentMeta, name);
+		}
+
+		LuaBindModule<LuaBindModule<ParentT>> BeginModule(const std::string& name)
+		{
+			return LuaBindModule<LuaBindModule<ParentT>>(mLuaState, mCurrentMeta, name);
+		}
+
+		ParentT EndModule()
+		{
+			Logger::Info("EndModule");
+			return ParentT(mLuaState);
+		}
+
+	protected:
+		std::string mName;
+	};
+
 	class LuaBinder
 	{
 	public:
@@ -117,6 +194,11 @@ namespace Cjing3D
 		LuaBindClass<T, LuaBinder> BeginClass(const std::string& name)
 		{
 			return LuaBindClass<T, LuaBinder>::BindClass(mLuaState, mCurrentMeta, name);
+		}
+
+		LuaBindModule<LuaBinder> BeginModule(const std::string& name)
+		{
+			return LuaBindModule<LuaBinder>(mCurrentMeta, name);
 		}
 
 	private:

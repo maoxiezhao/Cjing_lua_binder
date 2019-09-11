@@ -63,7 +63,7 @@ int main()
 
 	std::string dataPath = "./../Assets";
 	if (!FileData::OpenData("", dataPath))
-		Debug::Die("No data file was found int the direcion:" + dataPath);
+		Debug::Die("No data file was found int the direction:" + dataPath);
 
 	LuaContext context;
 	context.Initialize();

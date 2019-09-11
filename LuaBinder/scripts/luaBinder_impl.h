@@ -64,4 +64,12 @@ namespace Cjing3D
 	template<typename R, typename... Args>
 	struct BindClassStaticFunc<R(*)(Args...), R(*)(Args...)> :
 		BindClassStaicFuncCaller<R(*)(Args...), R, Args...> {};
+
+
+	// Bind Module meta method
+	struct BindModuleMetaMethod
+	{
+		static int Index(lua_State* l);
+		static int NewIndex(lua_State* l);
+	};
 }

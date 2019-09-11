@@ -52,4 +52,38 @@ void LuaBindClassBase::RegisterMethod(const std::string & name, LuaRef func)
 	metaClass.RawSet(name, func);
 }
 
+LuaBindModuleBase::LuaBindModuleBase(lua_State * l, LuaRef & meta, const std::string & name)
+{
+	LuaRef ref = meta.RawGet(name);
+	if (!ref.IsEmpty())
+	{
+		mCurrentMeta = meta;
+		return;
+	}
+
+	lua_State* l = meta.GetLuaState();
+
+	// create module metatable 
+	// module的所有成员根据write/read权限分别存在___getters和__setters中
+
+	LuaRef moduleTable = LuaRef::CreateTable(l);
+	moduleTable.SetMetatable(moduleTable);
+
+	moduleTable.RawSet("__index", &BindModuleMetaMethod::Index);
+	moduleTable.RawSet("__newindex", &BindModuleMetaMethod::NewIndex);
+	moduleTable.RawSet("___getters", LuaRef::CreateTable(l));			
+	moduleTable.RawSet("___setters", LuaRef::CreateTable(l));
+
+	meta.RawSet(name, moduleTable);
+	mCurrentMeta = moduleTable;
+}
+
+void LuaBindModuleBase::SetGetter(const std::string & name, const LuaRef & getter)
+{
+}
+
+void LuaBindModuleBase::SetReadOnly(const std::string & name)
+{
+}
+
 }

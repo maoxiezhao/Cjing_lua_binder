@@ -141,6 +141,19 @@ void LuaRef::Clear()
 	mRef = LUA_REFNIL;
 }
 
+bool LuaRef::IsFunction() const
+{
+	if (IsEmpty()){
+		return false;
+	}
+
+	Push();
+	int refType = lua_type(l, -1);
+	lua_pop(l, 1);
+
+	return refType == LUA_TFUNCTION;
+}
+
 void LuaRef::Push() const
 {
 	if (IsEmpty()) {

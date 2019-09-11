@@ -152,6 +152,9 @@
     <ClCompile Include="TODO.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\luaBinder_impl.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\debug.h">
@@ -274,5 +277,10 @@
     <ClInclude Include="scripts\luaArg.h">
       <Filter>scripts</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\main.lua">
+      <Filter>main</Filter>
+    </None>
   </ItemGroup>
 </Project>
