@@ -49,7 +49,8 @@ int Cjing3D::BindModuleMetaMethod::NewIndex(lua_State * l)
 	// stack: t key value meta _setter_table setter
 	if (lua_iscfunction(l, -1))
 	{
-		// TODO
+		lua_pushvalue(l, 2);
+		lua_call(l, 1, 0);
 	}
 	else
 	{

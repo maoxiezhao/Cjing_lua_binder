@@ -64,8 +64,9 @@ LuaBindModuleBase::LuaBindModuleBase(lua_State * l, LuaRef & meta, const std::st
 	lua_State* l = meta.GetLuaState();
 
 	// create module metatable 
-	// moduleµÄËùÓÐ³ÉÔ±¸ù¾Ýwrite/readÈ¨ÏÞ·Ö±ð´æÔÚ___gettersºÍ__settersÖÐ
+	// moduleï¿½ï¿½ï¿½ï¿½ï¿½Ð³ï¿½Ô±ï¿½ï¿½ï¿½ï¿½write/readÈ¨ï¿½Þ·Ö±ï¿½ï¿½ï¿½ï¿½___gettersï¿½ï¿½__settersï¿½ï¿½
 
+	std::string typeName = "<Module " + name + ">";
 	LuaRef moduleTable = LuaRef::CreateTable(l);
 	moduleTable.SetMetatable(moduleTable);
 
@@ -73,17 +74,34 @@ LuaBindModuleBase::LuaBindModuleBase(lua_State * l, LuaRef & meta, const std::st
 	moduleTable.RawSet("__newindex", &BindModuleMetaMethod::NewIndex);
 	moduleTable.RawSet("___getters", LuaRef::CreateTable(l));			
 	moduleTable.RawSet("___setters", LuaRef::CreateTable(l));
+	moduleTable.RawSet("___type", typeName);
 
 	meta.RawSet(name, moduleTable);
 	mCurrentMeta = moduleTable;
 }
 
+int LuaBindModuleBase::ReadOnlyError(lua_State* l)
+{
+	const std::string name = lua_tostring(l, lua_upvalueindex(1));
+	LuaException::Error(l, "The variable " + name + "is read only.");	
+}
+
 void LuaBindModuleBase::SetGetter(const std::string & name, const LuaRef & getter)
 {
+	mCurrentMeta.RawGet("___getters").RawSet(name, getter);
+}
+
+void LuaBindModuleBase::SetSetter(const std::string& name, const LuaRef& setter)
+{
+	mCurrentMeta.RawGet("___setters").RawSet(name, setter);
 }
 
 void LuaBindModuleBase::SetReadOnly(const std::string & name)
 {
+	std::string fullName = mCurrentMeta.RawGet<std::string>("__type") + "."  + name;
+	lua_State* l = mCurrentMeta.GetLuaState();
+
+	SetSetter(name, LuaRef::CreateFuncWithUserdata(l, LuaBindModuleBase::ReadOnlyError, fullName));
 }
 
 }

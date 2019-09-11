@@ -114,8 +114,10 @@ namespace Cjing3D
 
 		LuaBindModuleBase(lua_State* l, LuaRef& meta, const std::string& name);
 
+		static int ReadOnlyError(lua_State* l);
 	protected:
 		void SetGetter(const std::string& name, const LuaRef& getter);
+		void SetSetter(const std::string& name, const LuaRef& setter);
 		void SetReadOnly(const std::string& name);
 
 		LuaRef mCurrentMeta = LuaRef::NULL_REF;
@@ -140,23 +142,30 @@ namespace Cjing3D
 		LuaBindModule<ParentT>& AddConstant(const std::string& name, const V& value)
 		{
 			LuaRef ref = LuaRef::CreateRefFromValue(l, value);
-			if (ref.IsFunction() == false)
-			{
-
+			if (ref.IsFunction()) {
+				// TODO
 			}
 
+			SetGetter(name, ref);
+			SetReadOnly(name);
 			return *this;
 		}
 
 		template<typename V>
 		LuaBindModule<ParentT>& AddVariable(const std::string& name, const V& value)
 		{
+			SetSetter(name, LuaRef::CreateFuncWithPtr(l, &BindVariableMethod<V>::Setter, &value));
+			SetGetter(name, LuaRef::CreateFuncWithPtr(l, &BindVariableMethod<V>::Getter, &value));
 			return *this;
 		}
 
 		template<typename FUNC>
-		LuaBindModule<ParentT>& (const std::string& name, const FUNC& func)
+		LuaBindModule<ParentT>& AddFunction(const std::string& name, const FUNC& func)
 		{
+			using FunctionCaller = BindClassStaticFunc<FUNC>;
+			LuaRef funcRef = LuaRef::CreateFuncWithUserdata(mLuaState, &FunctionCaller::Caller, func);
+			mCurrentMeta.RawSet(name, funcRef);
+
 			return *this;
 		}
 

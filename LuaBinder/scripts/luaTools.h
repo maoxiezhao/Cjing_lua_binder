@@ -17,6 +17,8 @@ namespace LuaTools
 	void PrintInIndex(lua_State*l, int index);
 	int GetCallDepth(lua_State*l);
 
+	void CheckAssert(bool assert, const std::string& msg);
+
 	template<typename T>
 	inline void Push(lua_State*l, const T& v)
 	{
@@ -49,7 +51,7 @@ namespace LuaTools
 		return 0;
 	}
 
-	// ÇáÁ¿¼¶µÄUserData°ó¶¨£¬Ò»°ãÓÃÓÚ´´½¨Ò»¸öº¯ÊýÖ¸Õë¶ÔÏó
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UserDataï¿½ó¶¨£ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½
 	struct BindingUserData
 	{
 		template<typename T>

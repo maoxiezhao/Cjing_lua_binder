@@ -72,4 +72,38 @@ namespace Cjing3D
 		static int Index(lua_State* l);
 		static int NewIndex(lua_State* l);
 	};
+
+	// bind variable setter/getter, pass-by-value
+	template<typename T>
+	struct BindVariableMethod
+	{
+		static int Getter(lua_State*l)
+		{
+			return LuaTools::ExceptionBoundary(l, [&] {
+				LuaTools::CheckAssert(lua_islightuserdata(l, lua_upvalueindex(1)), 
+					"BindVariableMethod::Getter upvalue must is lightuserdata.");
+
+				const T* p = static_cast<const T*>(lua_touserdata(l, lua_upvalueindex(1)));
+				LuaTools::CheckAssert(p != nullptr, "BindVariableMethod::Getter userdata is nullptr.");
+
+				LuaTools::Push<T>(l, *p);
+				return 1;
+			});
+		}
+
+		static int Setter(lua_State*l)
+		{
+			return LuaTools::ExceptionBoundary(l, [&] {
+				LuaTools::CheckAssert(lua_islightuserdata(l, lua_upvalueindex(1)), 
+					"BindVariableMethod::Setter upvalue must is lightuserdata.");
+
+				T* p = static_cast<T*>(lua_touserdata(l, lua_upvalueindex(1)));
+				LuaTools::CheckAssert(p != nullptr, "BindVariableMethod::Setter userdata is nullptr.");
+
+				*p = LuaTools::Get<T>(l, 1);
+
+				return 0;
+			});
+		}
+	};
 }

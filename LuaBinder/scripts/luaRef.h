@@ -42,6 +42,14 @@ namespace Cjing3D
 			return CreateRef(l);
 		}
 
+		template<typename T>
+		static LuaRef CreateFuncWithPtr(lua_State*l, lua_CFunction func, T* p)
+		{
+			lua_pushlightuserdata(l, p);
+			lua_pushcclosure(l, func, 1);
+			return CreateRef(l);
+		}
+
 		bool IsEmpty()const;
 		int  GetRef()const;
 		void Push()const;
