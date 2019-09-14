@@ -14,11 +14,12 @@ using namespace Cjing3D;
 class Gun
 {
 public:
-	Gun() {}
+	Gun(const std::string& name):mName(name) {}
 	~Gun() {}
 
 	void Shoot() { std::cout << "Shoot" << std::endl; }
 	void Show() { std::cout << mName << std::endl; }
+	std::string GetName()const { return mName; }
 
 	static void PickUp(const std::string& name)
 	{
@@ -57,20 +58,22 @@ void TestLuaBinding(LuaContext& context)
 	// bind class
 	LuaBinder(l)
 		.BeginClass<Gun>("Gun")
-		.AddConstructor(_LUA_ARGS_())
+		.AddConstructor(_LUA_ARGS_(std::string))
 		.AddMethod("Shoot", &Gun::Shoot)
 		.AddFunction("PickUp", &Gun::PickUp)
+		.AddMethod("GetName", &Gun::GetName)
 		.EndClass();
 
-	Gun gun;
-	TestBindingFunction(l, gun, &Gun::Shoot);
+	//Gun gun;
+	//TestBindingFunction(l, gun, &Gun::Shoot);
 
 	// bind module
 	LuaBinder(l)
 		.BeginModule("Weather")
 		.AddConstant("Sun", "Sun")
 		.AddEnum("TestEnumType_B", TestEnumType_B)
-        .AddFunction("TestModuleFunction", TestModuleFunction)
+		.AddFunction("TestModuleFunction", TestModuleFunction)
+		.AddFunction("TestLambda", [](int value) { std::cout << value << std::endl; })
 		.EndModule();
 
 	// do test lua file

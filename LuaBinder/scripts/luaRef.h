@@ -53,10 +53,21 @@ namespace Cjing3D
 		}
 
 		template<typename T>
-		static LuaRef CreateFuncWithFunc(lua_State*l, lua_CFunction func, const T& userdata)
+		static std::enable_if_t<std::is_function<T>::value, LuaRef>
+			CreateFunc(lua_State*l, lua_CFunction func, const T& userdata)
 		{
 			// 将函数指针作为userdata压栈
 			LuaTools::BindingUserData::PushUserdata<T*>(l, &userdata);
+			lua_pushcclosure(l, func, 1);
+			return CreateRef(l);
+		}
+
+		template<typename T>
+		static std::enable_if_t<!std::is_function<T>::value, LuaRef>
+			CreateFunc(lua_State*l, lua_CFunction func, const T& userdata)
+		{
+			// 将函数指针作为userdata压栈
+			LuaTools::BindingUserData::PushUserdata<T>(l, userdata);
 			lua_pushcclosure(l, func, 1);
 			return CreateRef(l);
 		}

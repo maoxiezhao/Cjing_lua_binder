@@ -1,21 +1,32 @@
 -- Main Lua Function
 -- Test Lua Binding
 
-function Main()
+function TestBindingClass()
 	print("Test class binding")
     print(Gun);
     print("hello world!");
 
-    local gun = Gun:new();
+    local gun = Gun:new("Hello");
     gun:Shoot();
-
     Gun.PickUp("AAABBCC");
 
+	local name = gun:GetName();
+	print("name", name);
+end 
+
+function TestBindingModule()
 	print("Test module binding");
 	print(Weather);
 	print(Weather.Sun);
 	print("ENUM", TestEnumType_B, Weather.TestEnumType_B)
 	Weather.TestModuleFunction(10);
+	print("");
+	Weather.TestLambda(20);
+end 
+
+function Main()
+	TestBindingClass();
+	TestBindingModule();
 end 
 
 Main();

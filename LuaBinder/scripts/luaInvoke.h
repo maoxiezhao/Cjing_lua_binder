@@ -17,9 +17,10 @@ namespace Cjing3D
 		}
 	};
 	// Class Constructor
-	template<typename T, typename... Args>
+	template<typename T>
 	struct ClassStructorCaller
 	{
+		template<typename... Args>
 		static void Call(void* mem, std::tuple<Args...>& args)
 		{
 			ClassStructorDispatchCaller<T, std::tuple<Args...>, sizeof...(Args)>::Call(mem, args);

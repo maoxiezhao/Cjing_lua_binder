@@ -55,7 +55,8 @@ namespace LuaTools
 	struct BindingUserData
 	{
 		template<typename T>
-		static typename std::enable_if<!std::is_destructible<T>::value ||
+		static typename std::enable_if<
+			!std::is_destructible<T>::value ||
 			std::is_trivially_destructible<T>::value>::type
 			PushUserdata(lua_State*l, const T& obj)
 		{
@@ -71,7 +72,7 @@ namespace LuaTools
 			void* userdata = lua_newuserdata(l, sizeof(T));
 			new(userdata) T(obj);
 
-			PushUserdataMetatable(l);
+			PushUserdataMetatable<T>(l);
 			lua_setmetatable(l, -2);
 		}
 

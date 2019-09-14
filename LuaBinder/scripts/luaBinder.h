@@ -167,7 +167,7 @@ namespace Cjing3D
 		LuaBindModule<ParentT>& AddFunction(const std::string& name, const FUNC& func)
 		{
 			using FunctionCaller = BindClassStaticFunc<FUNC>;
-			LuaRef funcRef = LuaRef::CreateFuncWithFunc(GetLuaState(), &FunctionCaller::Caller, func);
+			LuaRef funcRef = LuaRef::CreateFunc(GetLuaState(), &FunctionCaller::Caller, FunctionCaller::ConvertToFunction(func));
 			mCurrentMeta.RawSet(name, funcRef);
 
 			return *this;
