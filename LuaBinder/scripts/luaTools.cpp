@@ -84,5 +84,12 @@ namespace LuaTools
 		for (; lua_getstack(l, depth + 1, &info) != 0; depth++);
 		return depth;
 	}
+
+	void CheckAssertion(lua_State*l, bool assertion, const std::string & msg)
+	{
+		if (assertion == false) {
+			LuaException::Error(l, msg);
+		}
+	}
 }
 }

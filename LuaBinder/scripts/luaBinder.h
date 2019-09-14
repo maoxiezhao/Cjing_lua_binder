@@ -112,9 +112,11 @@ namespace Cjing3D
 			mCurrentMeta(meta)
 		{}
 
-		LuaBindModuleBase(lua_State* l, LuaRef& meta, const std::string& name);
+		LuaBindModuleBase(LuaRef& meta, const std::string& name);
 
 		static int ReadOnlyError(lua_State* l);
+		lua_State* GetLuaState() { return mCurrentMeta.GetLuaState(); }
+
 	protected:
 		void SetGetter(const std::string& name, const LuaRef& getter);
 		void SetSetter(const std::string& name, const LuaRef& setter);
@@ -141,6 +143,7 @@ namespace Cjing3D
 		template<typename V>
 		LuaBindModule<ParentT>& AddConstant(const std::string& name, const V& value)
 		{
+			lua_State* l = GetLuaState();
 			LuaRef ref = LuaRef::CreateRefFromValue(l, value);
 			if (ref.IsFunction()) {
 				// TODO
@@ -154,6 +157,7 @@ namespace Cjing3D
 		template<typename V>
 		LuaBindModule<ParentT>& AddVariable(const std::string& name, const V& value)
 		{
+			lua_State* l = GetLuaState();
 			SetSetter(name, LuaRef::CreateFuncWithPtr(l, &BindVariableMethod<V>::Setter, &value));
 			SetGetter(name, LuaRef::CreateFuncWithPtr(l, &BindVariableMethod<V>::Getter, &value));
 			return *this;
@@ -163,7 +167,7 @@ namespace Cjing3D
 		LuaBindModule<ParentT>& AddFunction(const std::string& name, const FUNC& func)
 		{
 			using FunctionCaller = BindClassStaticFunc<FUNC>;
-			LuaRef funcRef = LuaRef::CreateFuncWithUserdata(mLuaState, &FunctionCaller::Caller, func);
+			LuaRef funcRef = LuaRef::CreateFuncWithFunc(GetLuaState(), &FunctionCaller::Caller, func);
 			mCurrentMeta.RawSet(name, funcRef);
 
 			return *this;
@@ -172,18 +176,18 @@ namespace Cjing3D
 		template<typename T>
 		LuaBindClass<T, LuaBindModule<ParentT>> BeginClass(const std::string& name)
 		{
-			return LuaBindClass<T, LuaBindModule<ParentT>>::BindClass(mLuaState, mCurrentMeta, name);
+			return LuaBindClass<T, LuaBindModule<ParentT>>::BindClass(GetLuaState(), mCurrentMeta, name);
 		}
 
 		LuaBindModule<LuaBindModule<ParentT>> BeginModule(const std::string& name)
 		{
-			return LuaBindModule<LuaBindModule<ParentT>>(mLuaState, mCurrentMeta, name);
+			return LuaBindModule<LuaBindModule<ParentT>>(GetLuaState(), mCurrentMeta, name);
 		}
 
 		ParentT EndModule()
 		{
 			Logger::Info("EndModule");
-			return ParentT(mLuaState);
+			return ParentT(mCurrentMeta.GetLuaState());
 		}
 
 	protected:

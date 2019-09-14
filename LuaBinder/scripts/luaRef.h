@@ -2,6 +2,7 @@
 
 #include "scripts\luaCommon.h"
 #include "scripts\luaTools.h"
+#include "scripts\luaArg.h"
 
 #include <string>
 
@@ -34,10 +35,28 @@ namespace Cjing3D
 			return CreateRef(l);
 		}
 
+		template<typename... Args>
+		static LuaRef CreateFunctionWithArgs(lua_State*l, lua_CFunction func, Args&&... args)
+		{
+			LuaPushArgs<Args...>::Push(l, std::forward<Args>(args)...);
+			//LuaTools::PushArgs(l, std::forward<Args>(args)...);
+			lua_pushcclosure(l, func, sizeof...(args));
+			return CreateRef(l);
+		}
+
 		template<typename T>
 		static LuaRef CreateFuncWithUserdata(lua_State*l, lua_CFunction func, const T& userdata)
 		{
 			LuaTools::BindingUserData::PushUserdata<T>(l, userdata);
+			lua_pushcclosure(l, func, 1);
+			return CreateRef(l);
+		}
+
+		template<typename T>
+		static LuaRef CreateFuncWithFunc(lua_State*l, lua_CFunction func, const T& userdata)
+		{
+			// 将函数指针作为userdata压栈
+			LuaTools::BindingUserData::PushUserdata<T*>(l, &userdata);
 			lua_pushcclosure(l, func, 1);
 			return CreateRef(l);
 		}

@@ -38,6 +38,18 @@ void TestBindingFunction(lua_State*l, T& object, const F& func)
 	//LuaTools::BindingUserData::PushUserdata<F>(l, func);
 }
 
+enum TestEnumType
+{
+	TestEnumType_A,
+	TestEnumType_B
+};
+
+int TestModuleFunction(int value)
+{
+	std::cout << "Test module function, value:" + std::to_string(value);
+	return 0;
+}
+
 void TestLuaBinding(LuaContext& context)
 {
 	lua_State* l = context.GetLuaState();
@@ -50,10 +62,19 @@ void TestLuaBinding(LuaContext& context)
 		.AddFunction("PickUp", &Gun::PickUp)
 		.EndClass();
 
-	context.DoFileIfExists(l, "main");
-
 	Gun gun;
 	TestBindingFunction(l, gun, &Gun::Shoot);
+
+	// bind module
+	LuaBinder(l)
+		.BeginModule("Weather")
+		.AddConstant("Sun", "Sun")
+		.AddEnum("TestEnumType_B", TestEnumType_B)
+        .AddFunction("TestModuleFunction", TestModuleFunction)
+		.EndModule();
+
+	// do test lua file
+	context.DoFileIfExists(l, "main");
 }
 
 int main()

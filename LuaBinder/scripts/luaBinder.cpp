@@ -52,7 +52,7 @@ void LuaBindClassBase::RegisterMethod(const std::string & name, LuaRef func)
 	metaClass.RawSet(name, func);
 }
 
-LuaBindModuleBase::LuaBindModuleBase(lua_State * l, LuaRef & meta, const std::string & name)
+LuaBindModuleBase::LuaBindModuleBase(LuaRef & meta, const std::string & name)
 {
 	LuaRef ref = meta.RawGet(name);
 	if (!ref.IsEmpty())
@@ -83,7 +83,8 @@ LuaBindModuleBase::LuaBindModuleBase(lua_State * l, LuaRef & meta, const std::st
 int LuaBindModuleBase::ReadOnlyError(lua_State* l)
 {
 	const std::string name = lua_tostring(l, lua_upvalueindex(1));
-	LuaException::Error(l, "The variable " + name + "is read only.");	
+	LuaException::Error(l, "The variable " + name + " is read only.\n");	
+	return 0;
 }
 
 void LuaBindModuleBase::SetGetter(const std::string & name, const LuaRef & getter)
@@ -98,10 +99,10 @@ void LuaBindModuleBase::SetSetter(const std::string& name, const LuaRef& setter)
 
 void LuaBindModuleBase::SetReadOnly(const std::string & name)
 {
-	std::string fullName = mCurrentMeta.RawGet<std::string>("__type") + "."  + name;
+	std::string fullName = mCurrentMeta.RawGet<std::string>("___type") + "."  + name;
 	lua_State* l = mCurrentMeta.GetLuaState();
 
-	SetSetter(name, LuaRef::CreateFuncWithUserdata(l, LuaBindModuleBase::ReadOnlyError, fullName));
+	SetSetter(name, LuaRef::CreateFunctionWithArgs(l, LuaBindModuleBase::ReadOnlyError, fullName));
 }
 
 }

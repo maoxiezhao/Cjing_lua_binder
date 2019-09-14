@@ -63,6 +63,22 @@ struct LuaArgs
     }
 };
 
+// 依次push当前参数
+template<typename... Args>
+struct LuaPushArgs;
+template<>
+struct LuaPushArgs<> { static void Push(lua_State*l) {} };
+
+template<typename P, typename... Args>
+struct LuaPushArgs<P, Args... >
+{
+	static void Push(lua_State*l, P&& p, Args&&... args)
+	{
+		LuaTools::Push<P>(l, std::forward<P>(p));
+		return LuaPushArgs<Args...>::Push(l, std::forward<Args>(args)...);
+	}
+};
+
 // 依次遍历获取各个参数
 template<typename... Args>
 struct LuaInputArgs;

@@ -5,6 +5,8 @@
 #include "scripts\luaRef.h"
 #include "scripts\luaObject.h"
 
+#include <functional>
+
 namespace Cjing3D
 {
 	// Method function 
@@ -59,12 +61,20 @@ namespace Cjing3D
 	};
 
 	template<typename F, typename Args = F, typename Enable = void>
-	struct BindClassStaticFunc{};
+	struct BindClassStaticFunc;
+
+	template<typename R, typename... Args>
+	struct BindClassStaticFunc<std::function<R(Args...)>, std::function<R(Args...)>> :
+		BindClassStaicFuncCaller<std::function<R(Args...)>, R, Args...> {};
 
 	template<typename R, typename... Args>
 	struct BindClassStaticFunc<R(*)(Args...), R(*)(Args...)> :
 		BindClassStaicFuncCaller<R(*)(Args...), R, Args...> {};
 
+	// check enable
+	template<typename F>
+	struct BindClassStaticFunc<F, F, typename std::enable_if<std::is_function<F>::value>::type> :
+		BindClassStaticFunc<F*, F*> {};
 
 	// Bind Module meta method
 	struct BindModuleMetaMethod
@@ -80,11 +90,11 @@ namespace Cjing3D
 		static int Getter(lua_State*l)
 		{
 			return LuaTools::ExceptionBoundary(l, [&] {
-				LuaTools::CheckAssert(lua_islightuserdata(l, lua_upvalueindex(1)), 
+				LuaTools::CheckAssertion(l, lua_islightuserdata(l, lua_upvalueindex(1)),
 					"BindVariableMethod::Getter upvalue must is lightuserdata.");
 
 				const T* p = static_cast<const T*>(lua_touserdata(l, lua_upvalueindex(1)));
-				LuaTools::CheckAssert(p != nullptr, "BindVariableMethod::Getter userdata is nullptr.");
+				LuaTools::CheckAssertion(l, p != nullptr, "BindVariableMethod::Getter userdata is nullptr.");
 
 				LuaTools::Push<T>(l, *p);
 				return 1;
@@ -94,11 +104,11 @@ namespace Cjing3D
 		static int Setter(lua_State*l)
 		{
 			return LuaTools::ExceptionBoundary(l, [&] {
-				LuaTools::CheckAssert(lua_islightuserdata(l, lua_upvalueindex(1)), 
+				LuaTools::CheckAssertion(l, lua_islightuserdata(l, lua_upvalueindex(1)),
 					"BindVariableMethod::Setter upvalue must is lightuserdata.");
 
 				T* p = static_cast<T*>(lua_touserdata(l, lua_upvalueindex(1)));
-				LuaTools::CheckAssert(p != nullptr, "BindVariableMethod::Setter userdata is nullptr.");
+				LuaTools::CheckAssertion(l, p != nullptr, "BindVariableMethod::Setter userdata is nullptr.");
 
 				*p = LuaTools::Get<T>(l, 1);
 
