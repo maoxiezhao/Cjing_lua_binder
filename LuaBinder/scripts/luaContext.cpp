@@ -1,4 +1,5 @@
 #include "luaContext.h"
+#include "luaBinder.h"
 #include "helper\debug.h"
 #include "helper\fileSystem.h"
 
@@ -17,6 +18,8 @@ void LuaContext::Initialize()
 	mLuaState = luaL_newstate();
 	lua_atpanic(mLuaState, api_panic);
 	luaL_openlibs(mLuaState);
+
+	AutoLuaBindFunctions::GetInstance().DoAutoBindFunctions(mLuaState);
 }
 
 void LuaContext::Update()

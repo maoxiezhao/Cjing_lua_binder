@@ -219,4 +219,25 @@ namespace Cjing3D
 		LuaRef mCurrentMeta = LuaRef::NULL_REF;
 	};
 
+	class AutoLuaBindFunctions
+	{
+	public:
+		static AutoLuaBindFunctions& GetInstance()
+		{
+			static AutoLuaBindFunctions funcs;
+			return funcs;
+		}
+
+		void PushAutoBindFunction(std::function<void(lua_State* l)> func);
+		void DoAutoBindFunctions(lua_State* l);
+		
+		std::vector<std::function<void(lua_State* l)>> mfuncs;
+	};
+
+#define LUA_FUNCTION_AUTO_BINDER(LuaName, function) \
+	class AutoBinder##LuaName{				\
+		public:AutoBinder##LuaName(){		\
+			AutoLuaBindFunctions::GetInstance().PushAutoBindFunction(function); }	\
+		static AutoBinder##LuaName instance;};	\
+	 AutoBinder##LuaName  AutoBinder##LuaName::instance;
 }

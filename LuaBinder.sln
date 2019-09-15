@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaBinder", "LuaBinder\LuaBinder.vcxproj", "{F9172C7B-56EF-40DC-9521-54763A5A3642}"
+	ProjectSection(ProjectDependencies) = postProject
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E} = {67D46A62-3BE0-42E7-9A47-FDD52156934E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaGenerator", "LuaGenerator\LuaGenerator.vcxproj", "{67D46A62-3BE0-42E7-9A47-FDD52156934E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,14 @@ Global
 		{F9172C7B-56EF-40DC-9521-54763A5A3642}.Release|x64.Build.0 = Release|x64
 		{F9172C7B-56EF-40DC-9521-54763A5A3642}.Release|x86.ActiveCfg = Release|Win32
 		{F9172C7B-56EF-40DC-9521-54763A5A3642}.Release|x86.Build.0 = Release|Win32
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E}.Debug|x64.ActiveCfg = Debug|x64
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E}.Debug|x64.Build.0 = Debug|x64
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E}.Debug|x86.ActiveCfg = Debug|Win32
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E}.Debug|x86.Build.0 = Debug|Win32
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E}.Release|x64.ActiveCfg = Release|x64
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E}.Release|x64.Build.0 = Release|x64
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E}.Release|x86.ActiveCfg = Release|Win32
+		{67D46A62-3BE0-42E7-9A47-FDD52156934E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -105,4 +105,16 @@ void LuaBindModuleBase::SetReadOnly(const std::string & name)
 	SetSetter(name, LuaRef::CreateFunctionWithArgs(l, LuaBindModuleBase::ReadOnlyError, fullName));
 }
 
+void AutoLuaBindFunctions::PushAutoBindFunction(std::function<void(lua_State*l)> func)
+{
+	mfuncs.push_back(func);
+}
+
+void AutoLuaBindFunctions::DoAutoBindFunctions(lua_State* l)
+{
+	for (auto func : mfuncs) {
+		func(l);
+	}
+}
+
 }

@@ -1,5 +1,5 @@
 
-// update date: 2019.9.14
+// last update date: 2019.9.15
 
 // 目前LuaBinder已经支持
 // 1.绑定Class对象
@@ -11,6 +11,7 @@
 
 // TODO
 // 1. 支持派生对象绑定（metatable要存储super信息)
-// 2. 支持绑定成员变量和全局Const值
+// 2. 优化整体结构和性能
 // 3. 通过宏来实现自动化绑定
+// 4. 将fileSystem等代码移到common项目中
 

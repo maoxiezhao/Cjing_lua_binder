@@ -15,6 +15,12 @@
     <Filter Include="scripts">
       <UniqueIdentifier>{247abbee-e74f-4d71-94ae-a75ecb4d5291}</UniqueIdentifier>
     </Filter>
+    <Filter Include="build">
+      <UniqueIdentifier>{f6a3ad04-b939-4f5b-ae4a-469f475372e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="build\generating">
+      <UniqueIdentifier>{75ec252c-ceeb-447e-b4db-495e98d52deb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mian.cpp">
@@ -146,14 +152,23 @@
     <ClCompile Include="scripts\luaObject.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\luaInvoke.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
     <ClCompile Include="TODO.cpp">
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="scripts\luaBinder_impl.cpp">
       <Filter>scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="build\generating\fileSystem_bindings.cpp">
+      <Filter>build\generating</Filter>
+    </ClCompile>
+    <ClCompile Include="build\generating\logger_bindings.cpp">
+      <Filter>build\generating</Filter>
+    </ClCompile>
+    <ClCompile Include="build\generating\test_bindings.cpp">
+      <Filter>build\generating</Filter>
+    </ClCompile>
+    <ClCompile Include="build\generating\debug_bindings.cpp">
+      <Filter>build\generating</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -277,10 +292,14 @@
     <ClInclude Include="scripts\luaArg.h">
       <Filter>scripts</Filter>
     </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\main.lua">
       <Filter>main</Filter>
     </None>
+    <None Include="precompile.bat" />
   </ItemGroup>
 </Project>
