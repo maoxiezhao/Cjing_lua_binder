@@ -15,6 +15,7 @@ namespace Cjing3D
 		// stack: obj ... meta luaObjectID	
 		lua_rawget(l, LUA_REGISTRYINDEX);
 
+		// stack: obj ... meta meta_1	
 		bool result = (lua_rawequal(l, -1, -2));
 		lua_pop(l, 2);
 		return result;
@@ -31,8 +32,28 @@ namespace Cjing3D
 		
 		// find in metatalbe first
 		lua_getmetatable(l, 1);
-		lua_pushvalue(l, 2); // push key
-		lua_rawget(l, -2);
+
+		while (true)
+		{
+			lua_pushvalue(l, 2); // push key
+			lua_rawget(l, -2);
+
+			if (!lua_isnil(l, -1)) {
+				break;
+			}
+			lua_pop(l, 1);
+
+			// get super, stack: meta
+			lua_pushliteral(l, "__SUPER");
+			lua_rawget(l, -2);
+
+			if (lua_isnil(l, -1)) {
+				break;
+			}
+
+			// stack: meta super_meta
+			lua_remove(l, -2);
+		}
 
 		return 1;
 	}

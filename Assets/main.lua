@@ -12,6 +12,10 @@ function TestBindingClass()
 
 	local name = gun:GetName();
 	print("name", name);
+
+	print("Test extend class binding")
+	local mini_gun = MiniGun:new("Uzi");
+	print(mini_gun:GetName());
 end 
 
 function TestBindingModule()

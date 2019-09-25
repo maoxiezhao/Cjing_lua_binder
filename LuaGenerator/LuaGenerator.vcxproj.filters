@@ -22,6 +22,9 @@
     <Filter Include="helper">
       <UniqueIdentifier>{d4a05885-d907-49ca-a979-e546847f05ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cplusplus">
+      <UniqueIdentifier>{a0bbaa9b-8d0a-4930-8abc-6b20ed26eba1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="generator\generator.h">

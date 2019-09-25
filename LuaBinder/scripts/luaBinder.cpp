@@ -1,7 +1,9 @@
 #include "luaBinder.h"
+#include "helper\debug.h"
 
 namespace Cjing3D {
 
+// TODO: refactor
 bool LuaBindClassBase::BindClassMeta(LuaRef & currentMeta, LuaRef & parentMeta, const std::string & name, void * currentClassID)
 {
 	LuaRef ref = parentMeta.RawGet(name);
@@ -30,15 +32,34 @@ bool LuaBindClassBase::BindClassMeta(LuaRef & currentMeta, LuaRef & parentMeta, 
 	LuaRef registry = LuaRef::CreateRef(l, LUA_REGISTRYINDEX);
 	registry.RawSet(classIDRef, classTable);
 
-	// no use now.
+	// no use now. ////////////////////////////////////////////
 	LuaRef constClassTable = LuaRef::CreateTable(l);
 	constClassTable.SetMetatable(constClassTable);
 	staticClassTable.RawSet("__CONST", constClassTable);
+	///////////////////////////////////////////////////////////
 
 	parentMeta.RawSet(name, staticClassTable);
 	currentMeta = staticClassTable;
 
 	return true;
+}
+
+bool LuaBindClassBase::BindExtendClassMeta(LuaRef & currentMeta, LuaRef & parentMeta, const std::string & name, void * currentClassID, void * superClassID)
+{
+	if (BindClassMeta(currentMeta, parentMeta, name, currentClassID))
+	{
+		lua_State* l = parentMeta.GetLuaState();
+		LuaRef registry = LuaRef::CreateRef(l, LUA_REGISTRYINDEX);
+		LuaRef superClass = registry.RawGetp(superClassID);
+
+		if (superClass.IsEmpty()) {
+			Debug::Error("The super class dosen't registered:" + name);
+		}
+
+		currentMeta.RawGet("__CLASS").RawSet("__SUPER", superClass);
+	}
+
+	return false;
 }
 
 void LuaBindClassBase::RegisterStaticFunction(const std::string & name, LuaRef func)

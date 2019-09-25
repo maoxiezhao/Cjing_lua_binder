@@ -7,6 +7,8 @@
 #include <iostream>
 #include <Windows.h>
 
+//#define __BINDER_DEBUG__
+
 int main(int argc, char** argv)
 {
 #ifndef __BINDER_DEBUG__
@@ -23,7 +25,6 @@ int main(int argc, char** argv)
 	std::string mode = argv[1];
 	if (mode.find("-bind") == std::string::npos)
 	{
-		Cjing3D::Debug::Error(mode);
 		Cjing3D::Debug::Error("Error mode:" + mode);
 		OutputDebugString("Invalid generate mode.");
 		return 0;
@@ -56,7 +57,7 @@ int main(int argc, char** argv)
 	Cjing3D::LuaBindingsGenerator generator;
 	generator.ParseAllHeader("");
 
-#ifndef __BINDER_DEBUG__
+#ifdef __BINDER_DEBUG__
 	system("Pause");
 #endif
 

@@ -46,6 +46,14 @@ void TestLuaBinding(LuaContext& context)
 		.AddMethod("GetName", &Gun::GetName)
 		.EndClass();
 
+	// bind extend class
+	LuaBinder(l)
+		.BeginExtendClass<MiniGun, Gun>("MiniGun")
+		.AddConstructor(_LUA_ARGS_(std::string))
+		.AddMethod("Shoot", &MiniGun::Shoot)
+		//.AddFunction("Drop", &MiniGun::Drop)
+		.EndClass();
+
 	//Gun gun;
 	//TestBindingFunction(l, gun, &Gun::Shoot);
 

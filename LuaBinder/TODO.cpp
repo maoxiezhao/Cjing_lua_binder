@@ -10,8 +10,11 @@
 // 6. class 支持绑定const函数，以及class和module绑定lambda函数,支持编译期is_lambda
 
 // TODO
-// 1. 支持派生对象绑定（metatable要存储super信息)
-// 2. 优化整体结构和性能
-// 3. 通过宏来实现自动化绑定
+// 1. 通过宏来实现自动化绑定，使用cplusplus分析源代码
+// 1.2 生成Lib文件
+
+// 2. 支持派生对象绑定（metatable要存储super信息)
+// 3. 支持const对象, 对象的Setter方法
+// 3. 优化整体结构和性能
 // 4. 将fileSystem等代码移到common项目中
 

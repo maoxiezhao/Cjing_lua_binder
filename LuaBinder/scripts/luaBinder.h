@@ -4,6 +4,10 @@
 
 #include <string>
 
+#define LUA_BINDER_REGISTER_CLASS 
+#define LUA_BINDER_REGISTER_CLASS_METHOD_FUNCTION
+#define LUA_BINDER_REGISTER_CLASS_STATIC_FUNCTION
+
 namespace Cjing3D
 {
 	// LuaBindClass在bindClass时会创建一个StaticMeta和一个ClassMeta,后者在创建userdata时会setmetatable
@@ -19,6 +23,7 @@ namespace Cjing3D
 
 	protected:
 		static bool BindClassMeta(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name, void* currentClassID);
+		static bool BindExtendClassMeta(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name, void* currentClassID, void* superClassID);
 
 		void RegisterStaticFunction(const std::string& name, LuaRef func);
 		void RegisterMethod(const std::string& name, LuaRef func);
@@ -42,6 +47,19 @@ namespace Cjing3D
 				currentMeta.RawGet("__CLASS").RawSet("__gc", &LuaObjectDestructor<T>::Call);
 			}
 			
+			return LuaBindClass<T, ParentT>(l, currentMeta);
+		}
+
+		template<typename SUPER>
+		static LuaBindClass<T, ParentT> BindExtendClass(lua_State* l, LuaRef& parentMeta, const std::string& name)
+		{
+			Logger::Info("BindClass");
+			LuaRef currentMeta;
+			if (BindExtendClassMeta(currentMeta, parentMeta, name, ObjectIDGenerator<T>::GetID(), ObjectIDGenerator<SUPER>::GetID()))
+			{
+				currentMeta.RawGet("__CLASS").RawSet("__gc", &LuaObjectDestructor<T>::Call);
+			}
+
 			return LuaBindClass<T, ParentT>(l, currentMeta);
 		}
 
@@ -207,6 +225,12 @@ namespace Cjing3D
 		LuaBindClass<T, LuaBinder> BeginClass(const std::string& name)
 		{
 			return LuaBindClass<T, LuaBinder>::BindClass(mLuaState, mCurrentMeta, name);
+		}
+
+		template<typename T, typename SUPER>
+		LuaBindClass<T, LuaBinder> BeginExtendClass(const std::string& name)
+		{
+			return LuaBindClass<T, LuaBinder>::BindExtendClass<SUPER>(mLuaState, mCurrentMeta, name);
 		}
 
 		LuaBindModule<LuaBinder> BeginModule(const std::string& name)
