@@ -2,6 +2,7 @@
 
 #include "scripts\luaRef.h"
 #include "scripts\luaTools.h"
+#include "scripts\luaBinder.h"
 
 #include <string>
 
@@ -17,7 +18,6 @@ public:
 	void Update();
 	void Uninitialize();
 
-	using FunctionExportToLua = int(lua_State* l);
 	static FunctionExportToLua
 		api_panic;
 
