@@ -43,7 +43,32 @@ namespace Cjing3D
 			}
 			lua_pop(l, 1);
 
-			// get super, stack: meta
+			// check getter
+			lua_pushliteral(l, "___getters");
+			lua_rawget(l, -2);
+			lua_pushvalue(l, 2);
+			lua_rawget(l, -2);
+
+			// stack:meta __getters getter(func)/nil
+			if (!lua_isnil(l, -1)) {
+				if (lua_iscfunction(l, -1)) {
+					if (lua_isuserdata(l, 1)) 
+					{
+						lua_pushvalue(l, 1);
+						lua_call(l, 1, 1);
+					}
+					else 
+					{
+						lua_call(l, 0, 1);
+					}
+				}
+
+				break;
+			}
+			lua_pop(l, 2);
+
+			// stack: meta
+			// try get super class
 			lua_pushliteral(l, "__SUPER");
 			lua_rawget(l, -2);
 
@@ -64,10 +89,55 @@ namespace Cjing3D
 		{
 			LuaException::Error(l, "Except userdata, got ." +
 				std::string(lua_typename(l, lua_type(l, 1))));
-			return 1;
+			return 0;
 		}
 
-		return 1;
+		// find in metatalbe first
+		lua_getmetatable(l, 1);
+
+		while (true)
+		{
+			// stack: meta
+			// check setter
+			lua_pushliteral(l, "___setters");
+			lua_rawget(l, -2);
+			lua_pushvalue(l, 2);
+			lua_rawget(l, -2);
+
+			// stack:meta __getters getter(func)/nil
+			if (!lua_isnil(l, -1)) {
+				if (lua_iscfunction(l, -1)) {
+					if (lua_isuserdata(l, 1))
+					{
+						lua_pushvalue(l, 1);
+						lua_pushvalue(l, 3);
+						lua_call(l, 2, 0);
+					}
+					else
+					{
+						lua_pushvalue(l, 3);
+						lua_call(l, 1, 0);
+					}
+
+					break;
+				}
+			}
+			lua_pop(l, 2);
+
+			// stack: meta
+			// try get super class
+			lua_pushliteral(l, "__SUPER");
+			lua_rawget(l, -2);
+
+			if (lua_isnil(l, -1)) {
+				break;
+			}
+
+			// stack: meta super_meta
+			lua_remove(l, -2);
+		}
+
+		return 0;
 	}
 
 	LuaObject * LuaObject::GetLuaObject(lua_State * l, int index, void * classID)

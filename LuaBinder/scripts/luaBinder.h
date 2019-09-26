@@ -21,6 +21,8 @@ namespace Cjing3D
 			mCurrentMeta(meta)
 		{}
 
+		lua_State* GetLuaState() { return mCurrentMeta.GetLuaState(); }
+
 	protected:
 		static bool BindClassMeta(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name, void* currentClassID);
 		static bool BindExtendClassMeta(LuaRef& currentMeta, LuaRef& parentMeta, const std::string& name, void* currentClassID, void* superClassID);
@@ -117,8 +119,8 @@ namespace Cjing3D
 		{
 			Logger::Info("AddMember");
 			lua_State* l = GetLuaState();
-			SetGetter(name, LuaRef::CreateFuncWithPtr(l, &BindClassMemberMethod<T, V>::Getter, &pointer));
-			SetSetter(name, LuaRef::CreateFuncWithPtr(l, &BindClassMemberMethod<T, V>::Setter, &pointer));
+			SetMemberGetter(name, LuaRef::CreateFunc(l, &BindClassMemberMethod<T, V>::Getter, pointer));
+			SetMemberSetter(name, LuaRef::CreateFunc(l, &BindClassMemberMethod<T, V>::Setter, pointer));
 
 			return *this;
 		}
@@ -128,8 +130,8 @@ namespace Cjing3D
 		{
 			Logger::Info("AddConstMember");
 			lua_State* l = GetLuaState();
-			SetGetter(name, LuaRef::CreateFuncWithPtr(l, &BindClassMemberMethod<T, V>::Getter, &pointer));
-			SetReadOnly(name);
+			SetMemberGetter(name, LuaRef::CreateFunc(l, &BindClassMemberMethod<T, V>::Getter, &pointer));
+			SetMemberReadOnly(name);
 
 			return *this;
 		}

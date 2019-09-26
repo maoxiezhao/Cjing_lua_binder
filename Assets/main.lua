@@ -9,6 +9,7 @@ function TestBindingClass()
     local gun = Gun:new("Hello");
     gun:Shoot();
     Gun.PickUp("AAABBCC");
+	print("TEST_MEMBER", gun.mValue);
 
 	local name = gun:GetName();
 	print("name", name);

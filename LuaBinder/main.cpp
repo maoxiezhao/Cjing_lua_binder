@@ -44,6 +44,7 @@ void TestLuaBinding(LuaContext& context)
 		.AddMethod("Shoot", &Gun::Shoot)
 		.AddFunction("PickUp", &Gun::PickUp)
 		.AddMethod("GetName", &Gun::GetName)
+		.AddMember("mValue", &Gun::mValue)
 		.EndClass();
 
 	// bind extend class

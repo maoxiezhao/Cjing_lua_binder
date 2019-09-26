@@ -27,6 +27,8 @@ public:
 		std::cout << name << std::endl;
 	}
 
+	std::string mValue = "Boom!!!!";
+
 protected:
 	std::string mName;
 };
