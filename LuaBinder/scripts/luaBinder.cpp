@@ -23,6 +23,9 @@ bool LuaBindClassBase::BindClassMeta(LuaRef & currentMeta, LuaRef & parentMeta, 
 	classTable.SetMetatable(classTable);
 	classTable.RawSet("__index", &LuaObject::MetaFuncIndex);
 	classTable.RawSet("__newindex", &LuaObject::MetaFuncNewIndex);
+	classTable.RawSet("___getters", LuaRef::CreateTable(l));			
+	classTable.RawSet("___setters", LuaRef::CreateTable(l));
+	classTable.RawSet("___type", name);
 	classTable.RawSetp(ObjectIDGenerator<LuaObject>::GetID(), classIDRef);
 
 	LuaRef staticClassTable = LuaRef::CreateTable(l);
@@ -71,6 +74,29 @@ void LuaBindClassBase::RegisterMethod(const std::string & name, LuaRef func)
 {
 	LuaRef metaClass = mCurrentMeta.RawGet("__CLASS");
 	metaClass.RawSet(name, func);
+}
+
+void LuaBindClassBase::SetMemberGetter(const std::string& name, const LuaRef& getter)
+{
+	mCurrentMeta.RawGet("__CLASS").RawGet("___getters").RawSet(name, getter);
+}
+
+void LuaBindClassBase::SetMemberSetter(const std::string& name, const LuaRef& setter)
+{
+	mCurrentMeta.RawGet("__CLASS").RawGet("___setters").RawSet(name, setter);
+}
+
+void LuaBindClassBase::SetMemberReadOnly(const std::string& name)
+{
+	std::string fullName = mCurrentMeta.RawGet("__CLASS").RawGet<std::string>("___type") + "."  + name;
+	SetMemberSetter(name, LuaRef::CreateFunctionWithArgs(mCurrentMeta.GetLuaState(), LuaBindClassBase::ReadOnlyError, fullName));
+}
+
+int LuaBindClassBase::ReadOnlyError(lua_State* l)
+{
+	const std::string name = lua_tostring(l, lua_upvalueindex(1));
+	LuaException::Error(l, "The variable " + name + " is read only.\n");	
+	return 0;
 }
 
 LuaBindModuleBase::LuaBindModuleBase(LuaRef & meta, const std::string & name)

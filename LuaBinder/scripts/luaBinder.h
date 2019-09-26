@@ -28,6 +28,12 @@ namespace Cjing3D
 		void RegisterStaticFunction(const std::string& name, LuaRef func);
 		void RegisterMethod(const std::string& name, LuaRef func);
 
+		void SetMemberGetter(const std::string& name, const LuaRef& getter);
+		void SetMemberSetter(const std::string& name, const LuaRef& setter);
+		void SetMemberReadOnly(const std::string& name);
+
+		static int ReadOnlyError(lua_State* l);
+
 		lua_State * mLuaState = nullptr;
 		LuaRef mCurrentMeta = LuaRef::NULL_REF;
 	};
@@ -76,9 +82,11 @@ namespace Cjing3D
 			return *this;
 		}
 
-		LuaBindClass<T, ParentT>& AddMetaFunction()
+		LuaBindClass<T, ParentT>& AddMetaFunction(const std::string& name, FunctionExportToLua function)
 		{
 			Logger::Info("AddMetaFunction");
+			currentMeta.RawGet("__CLASS").RawSet(name, function);
+
 			return *this;
 		}
 
@@ -104,9 +112,25 @@ namespace Cjing3D
 			return *this;
 		}
 
-		LuaBindClass<T, ParentT>& AddMember()
+		template<typename V>
+		LuaBindClass<T, ParentT>& AddMember(const std::string& name, V T::* pointer)
 		{
 			Logger::Info("AddMember");
+			lua_State* l = GetLuaState();
+			SetGetter(name, LuaRef::CreateFuncWithPtr(l, &BindClassMemberMethod<T, V>::Getter, &pointer));
+			SetSetter(name, LuaRef::CreateFuncWithPtr(l, &BindClassMemberMethod<T, V>::Setter, &pointer));
+
+			return *this;
+		}
+
+		template<typename V>
+		LuaBindClass<T, ParentT>& AddConstMember(const std::string& name, V T::* pointer)
+		{
+			Logger::Info("AddConstMember");
+			lua_State* l = GetLuaState();
+			SetGetter(name, LuaRef::CreateFuncWithPtr(l, &BindClassMemberMethod<T, V>::Getter, &pointer));
+			SetReadOnly(name);
+
 			return *this;
 		}
 
@@ -212,6 +236,7 @@ namespace Cjing3D
 		std::string mName;
 	};
 
+	// Lua binder main class
 	class LuaBinder
 	{
 	public:

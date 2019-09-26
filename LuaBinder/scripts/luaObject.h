@@ -71,7 +71,7 @@ namespace Cjing3D
 			return obj ? static_cast<T*>(obj->GetObjectPtr()) : nullptr;
 		}
 
-		// ·ÖÅäuserdata£¬Í¬Ê±ÉèÖÃmetatable
+		// ï¿½ï¿½ï¿½ï¿½userdataï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½metatable
 		template<typename T>
 		static void* Allocate(lua_State*l, void* classID)
 		{
@@ -90,7 +90,7 @@ namespace Cjing3D
 		static LuaObject* GetLuaObject(lua_State*l, int index, void* classID);
 	};
 
-	// ¶ÔÏóÓÉLua´´½¨£¬ÉúÃüÖÜÆÚÒ²ÓÉLuaÀ´¹ÜÀí£¬µ±GCÊ±»áµ÷ÓÃ¶ÔÏóµÄÎö¹¹º¯Êý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Luaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Luaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GCÊ±ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	template<typename T>
 	class LuaHandleObject : public LuaObject
 	{
@@ -105,7 +105,7 @@ namespace Cjing3D
 			obj->~T();
 		}
 
-		// ¸ù¾ÝArgs¹¹ÔìÒ»¸öÐÂµÄ¶ÔÏó£¬ÓÉLua·¢ÆðµÄ__callº¯ÊýÖÐµ÷ÓÃ
+		// ï¿½ï¿½ï¿½ï¿½Argsï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ÂµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½Luaï¿½ï¿½ï¿½ï¿½ï¿½__callï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½
 		template<typename... Args>
 		static void Push(lua_State* l, std::tuple<Args...>& args)
 		{
@@ -115,8 +115,8 @@ namespace Cjing3D
 			ClassStructorCaller<T>::Call(obj->GetObjectPtr(), args);
 		}
 
-		// ÔÚCPP¶Ëµ÷ÓÃ£¬¸ù¾Ý¿½±´¹¹Ôìº¯Êý´´½¨¶ÔÏóÑ¹Õ»
-		// ¶ÔÏó±ØÐëBindClass
+		// ï¿½ï¿½CPPï¿½Ëµï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹Õ»
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½BindClass
 		static void Push(lua_State* l, const T& obj)
 		{
 			void* classID = ObjectIDGenerator<T>::GetID();
@@ -131,14 +131,14 @@ namespace Cjing3D
 		}
 
 	private:
-		// »¹ÐèÒª¿¼ÂÇµ½¶ÔÏóÔÚÄÚ´æÖÐ¶ÔÆëÄ£Ê½
-		// µ±´óÓÚalignof£¨void*)Ê±£¬±Ø¶¨ÊÇÖ¸Õë£¬µ±Ð¡ÓÚÊ±¿ÉÄÜÊÇ»ù´¡ÀàÐÍ£¨»ò²¿·Ö°üº¬»ù´¡ÀàÐÍµÄ½á¹¹Ìå£©
+		// ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ä£Ê½
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½alignofï¿½ï¿½void*)Ê±ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½Ð¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ç»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ò²¿·Ö°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÍµÄ½á¹¹ï¿½å£©
 		/*using ALIGN_TPYP = std::conditional<alignof(T) <= alignof(void*), T, void*>::type;
 		static constexpr int MEM_PADDING = alignof(T) <= alignof(ALIGN_TPYP) ? 0 : alignof(T) - alignof(ALIGN_TPYP) + 1;*/
 		unsigned char mData[sizeof(T)];
 	};
 
-	// Ö¸Õë¶ÔÏó±ØÐëÔÚC++´´½¨£¬ÉúÃüÖÜÆÚÓÉC++À´¹ÜÀí£¬µ±GCÊ±»áµ÷ÓÃ¶ÔÏóµÄÎö¹¹º¯Êý
+	// Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½C++ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½C++ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GCÊ±ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	template<typename T>
 	class LuaObjectPtr : public LuaObject
 	{
@@ -148,7 +148,7 @@ namespace Cjing3D
 		{
 		}
 
-		// Ö¸Õë¶ÔÏó²»»á´´½¨ÐÂµÄÊµÀý£¬¶øÖ»ÊÇ´´½¨Ò»¸öÐÂµÄLuaObjectPtrÖ¸Ïò¶ÔÏó
+		// Ö¸ï¿½ï¿½ï¿½ï¿½ó²»»á´´ï¿½ï¿½ï¿½Âµï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½Ç´ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½LuaObjectPtrÖ¸ï¿½ï¿½ï¿½ï¿½ï¿½
 		static void Push(lua_State* l, const T& obj)
 		{
 			void* classID = ObjectIDGenerator<T>::GetID();
@@ -167,11 +167,11 @@ namespace Cjing3D
 
 	///////////////////////////////////////////////////////////////////////////
 
-	// ¶ÔÑ¹Õ»µÄ¶ÔÏóÐèÒªÅÐ¶Ï¶ÔÏóÊÇ·ñÊÇref
+	// ï¿½ï¿½Ñ¹Õ»ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ð¶Ï¶ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ref
 	template<typename T, bool IsRef>
 	struct LuaObjectHandler {};
 
-	// ·Çref¶ÔÏó£¬ÔòÖ±½Ó¿½±´¹¹ÔìÒ»¸öÐÂµÄÊµÀý
+	// ï¿½ï¿½refï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½Êµï¿½ï¿½
 	template<typename T>
 	struct LuaObjectHandler<T, false>
 	{
@@ -187,7 +187,7 @@ namespace Cjing3D
 		}
 	};
 
-	// ref¶ÔÏó£¬Ôò´´½¨Ò»¸öLuaPtrObject¶ÔÏóÑ¹Õ»
+	// refï¿½ï¿½ï¿½ï¿½ï¿½ò´´½ï¿½Ò»ï¿½ï¿½LuaPtrObjectï¿½ï¿½ï¿½ï¿½Ñ¹Õ»
 	template<typename T>
 	struct LuaObjectHandler<T, true>
 	{

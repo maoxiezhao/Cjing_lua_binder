@@ -24,8 +24,8 @@ namespace Cjing3D
 	};
 
 	template<typename F>
-	struct LambdaTraits : LambdaTraits<decltype(&F::operator())> {};	// lambda»ù±¾¿ÉÒÔÊÓÎªÒ»¸öÎ±º¯Êý£¨Àà£©£¬ÇÒ´æÔÚÓÐoperator()·½·¨
-																		// lambda::operator(),¶Ôoperator()ÀàÐÍ¿ÉµÃµ½Ò»¸öÀàµÄ³ÉÔ±º¯ÊýÖ¸Õë
+	struct LambdaTraits : LambdaTraits<decltype(&F::operator())> {};	// lambdaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÒ»ï¿½ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£©ï¿½ï¿½ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ï¿½operator()ï¿½ï¿½ï¿½ï¿½
+																		// lambda::operator(),ï¿½ï¿½operator()ï¿½ï¿½ï¿½Í¿ÉµÃµï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ä³ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
 	template<typename F, typename R, typename... Args>
 	struct LambdaTraits<R(F::*)(Args...)>
 	{	
@@ -159,6 +159,47 @@ namespace Cjing3D
 				LuaTools::CheckAssertion(l, p != nullptr, "BindVariableMethod::Setter userdata is nullptr.");
 
 				*p = LuaTools::Get<T>(l, 1);
+
+				return 0;
+			});
+		}
+	};
+
+	// bind variable setter/getter
+	// class member pointer: V T::*
+	template<typename T, typename V>
+	struct BindClassMemberMethod
+	{
+		static int Getter(lua_State*l)
+		{
+			return LuaTools::ExceptionBoundary(l, [&] {
+				LuaTools::CheckAssertion(l, lua_islightuserdata(l, lua_upvalueindex(1)),
+					"BindClassMemberMethod::Getter upvalue must is lightuserdata.");
+
+				// get class member pointer
+				auto p = static_cast<V T::**>(lua_touserdata(l, lua_upvalueindex(1)));
+
+				T* obj = LuaObject::GetObject<T>(l, 1);
+				auto& value = (obj->**p);
+
+				LuaTools::Push<V>(l, value);
+				return 1;
+			});
+		}
+
+		static int Setter(lua_State*l)
+		{
+			return LuaTools::ExceptionBoundary(l, [&] {
+				LuaTools::CheckAssertion(l, lua_islightuserdata(l, lua_upvalueindex(1)),
+					"BindClassMemberMethod::Setter upvalue must is lightuserdata.");
+
+				// get class member pointer
+				auto p = static_cast<V T::**>(lua_touserdata(l, lua_upvalueindex(1)));
+
+				T* obj = LuaObject::GetObject<T>(l, 1);
+				auto value = LuaTools::Get<V>(l, 2);
+
+				(obj->**p) = value;
 
 				return 0;
 			});

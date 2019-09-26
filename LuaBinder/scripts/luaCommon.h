@@ -10,11 +10,13 @@ template<typename T>
 struct ObjectIDGenerator
 {
 public:
-	// Ê¹ÓÃTÀàÐÍÏÂµÄObjectIDGenerator½á¹¹ÌåµÄstatic±äÁ¿µØÖ·×÷ÎªID
-	// ×÷ÎªÄ³¸ö¶ÔÏóµÄÎ»ÒÆ±êÊ¶·û
+	// Ê¹ï¿½ï¿½Tï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ObjectIDGeneratorï¿½á¹¹ï¿½ï¿½ï¿½staticï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ÎªID
+	// ï¿½ï¿½ÎªÄ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Æ±ï¿½Ê¶ï¿½ï¿½
 	static void* GetID()
 	{
 		static bool id = false;
 		return &id;
 	}
 };
+
+using FunctionExportToLua = int(lua_State* l);

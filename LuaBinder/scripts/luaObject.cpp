@@ -7,7 +7,7 @@ namespace Cjing3D
 		// check current class
 		// 1.get current_metatable
 		// 2.get classID frome metatable
-		// 3.get target_metatable from lua_registryindex and compare with current_metatable
+		// 3.get target_metatable from lua_registryIndex and compare with current_metatable
 
 		index = LuaTools::GetPositiveIndex(l, index);
 		lua_getmetatable(l, index);
@@ -87,8 +87,8 @@ namespace Cjing3D
 			return nullptr;
 		}
 
-		// check class
-		// stack: obj args... except_meta
+		// check current meta and expected meta
+		// stack: obj args... expected_meta
 		lua_getmetatable(l, index);
 		if (!lua_istable(l, -1))
 		{
@@ -96,7 +96,7 @@ namespace Cjing3D
 			return nullptr;
 		}
 
-		// except_meta crrent_meta
+		// stack: obj args... expected_meta crrent_meta
 		bool is_valid = false;
 		while(!lua_isnil(l, -1))
 		{
@@ -110,13 +110,14 @@ namespace Cjing3D
 			lua_pushstring(l, "__SUPER");
 			lua_rawget(l, -2);
 
-			// stack: except_meta current_meta nil/super_meta
+			// stack: expected_meta current_meta nil/super_meta
 			lua_remove(l, -2);
+			// stack: expected_meta nil/super_meta
 		}
 
 		lua_pop(l, 2);
-
 		// stack: obj args... 
+
 		if (is_valid == true)
 		{
 			return static_cast<LuaObject*>(lua_touserdata(l, index));
