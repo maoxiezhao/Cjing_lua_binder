@@ -87,7 +87,7 @@ namespace Cjing3D
 		LuaBindClass<T, ParentT>& AddMetaFunction(const std::string& name, FunctionExportToLua function)
 		{
 			Logger::Info("AddMetaFunction");
-			currentMeta.RawGet("__CLASS").RawSet(name, function);
+			mCurrentMeta.RawGet("__CLASS").RawSet(name, function);
 
 			return *this;
 		}
