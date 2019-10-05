@@ -3,12 +3,15 @@
 #include <string>
 #include <iostream>
 
+#include "scripts\luaBinder.h"
+
 // Testing Class
 
 LUA_BINDER_REGISTER_CLASS
 class Gun
 {
 public:
+	LUA_BINDER_REGISTER_CLASS_CONSTRUCTOR
 	Gun(const std::string& name) :mName(name) {}
 	~Gun() {}
 
@@ -21,7 +24,7 @@ public:
 	LUA_BINDER_REGISTER_CLASS_METHOD_FUNCTION
 	std::string GetName()const { return mName; }
 
-	LUA_BINDER_REGISTER_CLASS_STATIC_FUNCTION
+	LUA_BINDER_REGISTER_CLASS_METHOD_FUNCTION
 	static void PickUp(const std::string& name)
 	{
 		std::cout << name << std::endl;

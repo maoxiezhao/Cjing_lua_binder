@@ -8,6 +8,7 @@
 #include <Windows.h>
 
 //#define __BINDER_DEBUG__
+//#define USE_CPLUSPLUS_PARSE
 
 int main(int argc, char** argv)
 {
@@ -56,6 +57,7 @@ int main(int argc, char** argv)
 
 	Cjing3D::LuaBindingsGenerator generator;
 	generator.ParseAllHeader("");
+	generator.GenerateSource("luabind_registers");
 
 #ifdef __BINDER_DEBUG__
 	system("Pause");

@@ -128,10 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="build\generating\debug_bindings.cpp" />
-    <ClCompile Include="build\generating\fileSystem_bindings.cpp" />
-    <ClCompile Include="build\generating\logger_bindings.cpp" />
-    <ClCompile Include="build\generating\test_bindings.cpp" />
+    <ClCompile Include="build\generating\luabind_registers.cpp" />
     <ClCompile Include="helper\debug.cpp" />
     <ClCompile Include="helper\fileSystem.cpp" />
     <ClCompile Include="helper\logger.cpp" />

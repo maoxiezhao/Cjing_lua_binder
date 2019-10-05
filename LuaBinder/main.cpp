@@ -37,15 +37,15 @@ void TestLuaBinding(LuaContext& context)
 {
 	lua_State* l = context.GetLuaState();
 
-	// bind class
-	LuaBinder(l)
-		.BeginClass<Gun>("Gun")
-		.AddConstructor(_LUA_ARGS_(std::string))
-		.AddMethod("Shoot", &Gun::Shoot)
-		.AddFunction("PickUp", &Gun::PickUp)
-		.AddMethod("GetName", &Gun::GetName)
-		.AddMember("mValue", &Gun::mValue)
-		.EndClass();
+	//// bind class
+	//LuaBinder(l)
+	//	.BeginClass<Gun>("Gun")
+	//	.AddConstructor(_LUA_ARGS_(std::string))
+	//	.AddMethod("Shoot", &Gun::Shoot)
+	//	.AddFunction("PickUp", &Gun::PickUp)
+	//	.AddMethod("GetName", &Gun::GetName)
+	//	.AddMember("mValue", &Gun::mValue)
+	//	.EndClass();
 
 	// bind extend class
 	LuaBinder(l)
