@@ -1,2 +1,1 @@
-12:50:37     [Fatal]  The file:debug.h/debug.h isn't exits.
-12:50:37     [Error]  The file:debug.h/debug.h isn't exits.
+01:07:58     [Error]  Error argc1
